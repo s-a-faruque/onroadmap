@@ -92,8 +92,8 @@ export const appConfig: RoadmapAppConfig = {
       { value: 'month', label: 'Snap month' },
     ],
     defaultSnapMode: 'week',
-    enableJsonExport: false,
-    enableJsonImport: false,
+    enableJsonExport: true,
+    enableJsonImport: true,
     enablePdfDownload: true,
     pdfWatermark: {
       enabled: false,

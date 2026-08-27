@@ -731,10 +731,13 @@ select {
 .lane-label input {
   width: 100%;
   min-width: 0;
+  overflow: hidden;
   border: 0;
   background: transparent;
   color: var(--ink);
   font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lane-label button {

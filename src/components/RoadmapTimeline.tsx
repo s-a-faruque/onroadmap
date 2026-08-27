@@ -90,7 +90,12 @@ export function RoadmapTimeline({
               const laneLayout = laneTaskLayouts[lane.id];
               return <div className="lane-row" key={lane.id} style={{ height: laneLayout?.height ?? MIN_LANE_HEIGHT }}>
                 <div className="lane-label">
-                  <input value={lane.name} onChange={(event) => onLaneChange(lane.id, event.target.value)} />
+                  <input
+                    value={lane.name}
+                    title={lane.name}
+                    aria-label={`Lane title: ${lane.name}`}
+                    onChange={(event) => onLaneChange(lane.id, event.target.value)}
+                  />
                   <button type="button" onClick={() => onAddTask(lane.id)} aria-label={`Add task to ${lane.name}`}><Plus size={15} /></button>
                 </div>
                 <div className="lane-track" style={{ width: timelineWidth }}>
