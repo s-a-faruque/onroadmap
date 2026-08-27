@@ -63,6 +63,7 @@ interface TimelineRange {
 function createInitialState(year: number, startMonth: number, monthSpan: number): RoadmapState {
   return {
     title: 'Roadmap',
+    subtitle: 'Web & Content Team roadmap',
     year,
     lanes: [
       { id: 'engineering', name: 'Engineering' },
@@ -102,7 +103,11 @@ function createInitialState(year: number, startMonth: number, monthSpan: number)
 }
 
 function normalizeRoadmap(roadmap: RoadmapState): RoadmapState {
-  return { ...roadmap, title: roadmap.title?.trim() || 'Roadmap' };
+  return {
+    ...roadmap,
+    title: roadmap.title?.trim() || 'Roadmap',
+    subtitle: roadmap.subtitle?.trim() || 'Web & Content Team roadmap',
+  };
 }
 
 function createTask(year: number, startMonth: number, monthSpan: number, laneId: string, index: number): RoadmapTask {
@@ -520,7 +525,15 @@ function App() {
     <main className="app-shell">
       <section className="topbar" aria-label="Roadmap controls">
         <div>
-          <p className="eyebrow">{companyName ? `${companyName} :: ` : ''}Web & Content Team roadmap</p>
+          <p className="eyebrow">
+            {companyName ? `${companyName} :: ` : ''}
+            <input
+              className="roadmap-subtitle"
+              value={roadmap.subtitle}
+              onChange={(event) => setRoadmap((currentRoadmap) => ({ ...currentRoadmap, subtitle: event.target.value }))}
+              aria-label="Roadmap subtitle"
+            />
+          </p>
           <h1>
             <input
               className="roadmap-title"
