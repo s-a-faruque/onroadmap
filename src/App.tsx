@@ -1,5 +1,5 @@
 import { ChangeEvent, PointerEvent as ReactPointerEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowRight, CalendarDays, Download, FileDown, GripVertical, Palette, Plus, Save, SlidersHorizontal, Upload } from 'lucide-react';
+import { ArrowRight, CalendarDays, FileDown, GripVertical, Palette, Save, SlidersHorizontal } from 'lucide-react';
 import {
   dateToDay,
   dayToDate,
@@ -14,19 +14,13 @@ import {
 import { appConfig } from './appConfig';
 import { localRoadmapStore } from './storage';
 import type { RoadmapState, RoadmapTask, SnapMode, TimelineView } from './types';
+import { PlannerHeader } from './components/PlannerHeader';
+import { DragMode, RoadmapTimeline } from './components/RoadmapTimeline';
 
 const TIMELINE_RANGE_STORAGE_KEY = 'onroadmap.timelineRange.v1';
 
-const MIN_LANE_HEIGHT = 86;
-const LANE_LABEL_WIDTH = 168;
-const TASK_HEIGHT = 56;
-const TASK_TOP = 18;
-const TASK_GAP = 10;
-const TASK_ROW_HEIGHT = TASK_HEIGHT + TASK_GAP;
 const CURRENT_YEAR = new Date().getFullYear();
 const COLORS = ['#f25f5c', '#247ba0', '#70c1b3', '#f3b562', '#7f5af0', '#2cb67d'];
-
-type DragMode = 'move' | 'resize-left' | 'resize-right';
 
 interface DragSession {
   mode: DragMode;
@@ -37,18 +31,6 @@ interface DragSession {
   originalStartDay: number;
   originalEndDay: number;
   originalLaneIndex: number;
-}
-
-interface PositionedTask {
-  task: RoadmapTask;
-  startDay: number;
-  endDay: number;
-  rowIndex: number;
-}
-
-interface LaneTaskLayout {
-  height: number;
-  tasks: PositionedTask[];
 }
 
 interface TimelineMonth {
@@ -124,36 +106,6 @@ function createTask(year: number, startMonth: number, monthSpan: number, laneId:
     color: COLORS[index % COLORS.length],
     tags: ['Label'],
   };
-}
-
-function getLaneTaskLayouts(roadmap: RoadmapState, timelineYear: number, startMonth: number, monthSpan: number): Record<string, LaneTaskLayout> {
-  return roadmap.lanes.reduce<Record<string, LaneTaskLayout>>((layouts, lane) => {
-    const rowEndDays: number[] = [];
-    const tasks = roadmap.tasks
-      .filter((task) => task.laneId === lane.id)
-      .map((task) => ({
-        task,
-        startDay: dateToDay(task.startDate, timelineYear, startMonth, monthSpan),
-        endDay: dateToDay(task.endDate, timelineYear, startMonth, monthSpan),
-      }))
-      .sort((firstTask, secondTask) => firstTask.startDay - secondTask.startDay || firstTask.endDay - secondTask.endDay)
-      .map((taskLayout) => {
-        const rowIndex = rowEndDays.findIndex((endDay) => taskLayout.startDay > endDay);
-        const nextRowIndex = rowIndex === -1 ? rowEndDays.length : rowIndex;
-
-        rowEndDays[nextRowIndex] = taskLayout.endDay;
-
-        return { ...taskLayout, rowIndex: nextRowIndex };
-      });
-    const rowCount = Math.max(rowEndDays.length, 1);
-
-    layouts[lane.id] = {
-      height: Math.max(MIN_LANE_HEIGHT, TASK_TOP * 2 + rowCount * TASK_HEIGHT + (rowCount - 1) * TASK_GAP),
-      tasks,
-    };
-
-    return layouts;
-  }, {});
 }
 
 function formatTimelineRange(year: number, startMonth: number, monthSpan: number) {
@@ -373,7 +325,6 @@ function App() {
   const months = useMemo(() => monthSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
   const quarters = useMemo(() => quarterSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
   const weeks = useMemo(() => weekSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
-  const laneTaskLayouts = useMemo(() => getLaneTaskLayouts(roadmap, timelineYear, timelineStartMonth, timelineMonthSpan), [roadmap, timelineYear, timelineStartMonth, timelineMonthSpan]);
 
   useEffect(() => {
     function handleHashChange() {
@@ -422,7 +373,7 @@ function App() {
     function handlePointerMove(event: PointerEvent) {
       setRoadmap((currentRoadmap) => {
         const horizontalDelta = Math.round((event.clientX - activeDragSession.startClientX) / dayWidth);
-        const verticalDelta = Math.round((event.clientY - activeDragSession.startClientY) / MIN_LANE_HEIGHT);
+        const verticalDelta = Math.round((event.clientY - activeDragSession.startClientY) / 86);
         const nextLaneIndex = Math.min(
           Math.max(activeDragSession.originalLaneIndex + verticalDelta, 0),
           currentRoadmap.lanes.length - 1,
@@ -662,239 +613,46 @@ function App() {
 
   return (
     <main className="app-shell">
-      <nav className="planner-nav" aria-label="Planner navigation">
-        <div className="brand-lockup">
-          <span className="brand-mark">O</span>
-          <span>onroadmap</span>
-        </div>
-        <button className="planner-nav-action" type="button" onClick={() => { window.location.hash = ''; }}>
-          Overview
-        </button>
-      </nav>
-      <section className="topbar" aria-label="Roadmap controls">
-        <div>
-          <p className="eyebrow">
-            <input
-              className="roadmap-subtitle"
-              value={roadmap.subtitle}
-              onChange={(event) => setRoadmap((currentRoadmap) => ({ ...currentRoadmap, subtitle: event.target.value }))}
-              aria-label="Roadmap subtitle"
-            />
-          </p>
-          <h1>
-            <input
-              className="roadmap-title"
-              value={roadmap.title}
-              onChange={(event) => setRoadmap((currentRoadmap) => ({ ...currentRoadmap, title: event.target.value }))}
-              aria-label="Roadmap title"
-            />
-          </h1>
-        </div>
-
-        <div className="controls">
-          <div className="timeline-range-picker" aria-label="Timeline range">
-            <label className="year-field">
-              <span>From</span>
-              <input type="month" value={getMonthInputValue(timelineRangeSelection.start)} onChange={(event) => updateTimelineStart(event.target.value)} />
-            </label>
-            <label className="year-field">
-              <span>To</span>
-              <input type="month" value={getMonthInputValue(timelineRangeSelection.end)} onChange={(event) => updateTimelineEnd(event.target.value)} />
-            </label>
-          </div>
-
-          <div className="segmented" aria-label="Timeline view">
-            {(['month', 'week'] as TimelineView[]).map((view) => (
-              <button
-                key={view}
-                className={timelineView === view ? 'active' : ''}
-                type="button"
-                onClick={() => setTimelineView(view)}
-              >
-                {view}
-              </button>
-            ))}
-          </div>
-
-          {enabledSnapModes.length > 0 && (
-            <select value={activeSnapMode} onChange={(event) => setSnapMode(event.target.value as SnapMode)}>
-              {enabledSnapModes.map((snapOption) => (
-                <option key={snapOption.value} value={snapOption.value}>
-                  {snapOption.label}
-                </option>
-              ))}
-            </select>
-          )}
-
-          <button type="button" className="icon-button" onClick={addLane} title="Add lane" aria-label="Add lane">
-            <Plus size={18} />
-          </button>
-          {appConfig.controls.enableJsonExport && (
-            <button type="button" className="icon-button" onClick={exportRoadmap} title="Export JSON" aria-label="Export JSON">
-              <Download size={18} />
-            </button>
-          )}
-          {appConfig.controls.enablePdfDownload && (
-            <button type="button" className="icon-button" onClick={exportRoadmapPdf} title="Download PDF" aria-label="Download PDF">
-              <FileDown size={18} />
-            </button>
-          )}
-          {appConfig.controls.enableJsonImport && (
-            <>
-              <button
-                type="button"
-                className="icon-button"
-                onClick={() => fileInputRef.current?.click()}
-                title="Import JSON"
-                aria-label="Import JSON"
-              >
-                <Upload size={18} />
-              </button>
-              <input ref={fileInputRef} className="hidden-input" type="file" accept="application/json" onChange={importRoadmap} />
-            </>
-          )}
-        </div>
-      </section>
-
-      <section className="timeline-card" aria-label="Roadmap timeline">
-        <div className="timeline-scroll">
-          <div ref={timelineRef} className="timeline" style={{ width: LANE_LABEL_WIDTH + timelineWidth }}>
-            <div className={`timeline-header ${timelineView === 'week' ? 'weekly-header' : ''}`}>
-              <div className="lane-header">Swimlanes</div>
-              <div className="date-header" style={{ width: timelineWidth }}>
-                <div className="quarter-row">
-                  {quarters.map((quarter) => (
-                    <div
-                      key={quarter.label}
-                      className="quarter-cell"
-                      style={{ left: quarter.startDay * dayWidth, width: quarter.days * dayWidth }}
-                    >
-                      {quarter.label}
-                    </div>
-                  ))}
-                </div>
-                <div className="month-row">
-                  {months.map((month) => (
-                    <div
-                      key={month.label}
-                      className="month-cell"
-                      style={{ left: month.startDay * dayWidth, width: month.days * dayWidth }}
-                    >
-                      {month.label}
-                    </div>
-                  ))}
-                </div>
-                {timelineView === 'week' && (
-                  <div className="week-row" aria-label="Weekly dates">
-                    {weeks.map((week) => (
-                      <div
-                        key={week.startDay}
-                        className="week-cell"
-                        style={{ left: week.startDay * dayWidth, width: week.days * dayWidth }}
-                      >
-                        {week.label}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="timeline-body">
-              <div className={`grid-lines ${timelineView === 'week' ? 'weekly-grid-lines' : ''}`} style={{ left: LANE_LABEL_WIDTH, width: timelineWidth }}>
-                {timelineView === 'week'
-                  ? Array.from({ length: Math.ceil(dayCount / 7) + 1 }, (_, index) => (
-                      <span key={index} style={{ left: index * 7 * dayWidth }} />
-                    ))
-                  : months.map((month) => <span key={month.label} style={{ left: month.startDay * dayWidth }} />)}
-              </div>
-
-              {roadmap.lanes.map((lane) => {
-                const laneLayout = laneTaskLayouts[lane.id];
-                const laneTasks = laneLayout?.tasks ?? [];
-                const laneHeight = laneLayout?.height ?? MIN_LANE_HEIGHT;
-
-                return (
-                  <div className="lane-row" key={lane.id} style={{ height: laneHeight }}>
-                    <div className="lane-label">
-                      <input
-                        value={lane.name}
-                        onChange={(event) =>
-                          setRoadmap((currentRoadmap) => ({
-                            ...currentRoadmap,
-                            lanes: currentRoadmap.lanes.map((currentLane) =>
-                              currentLane.id === lane.id ? { ...currentLane, name: event.target.value } : currentLane,
-                            ),
-                          }))
-                        }
-                      />
-                      <button type="button" onClick={() => addTask(lane.id)} aria-label={`Add task to ${lane.name}`}>
-                        <Plus size={15} />
-                      </button>
-                    </div>
-
-                    <div className="lane-track" style={{ width: timelineWidth }}>
-                      {laneTasks.map(({ task, startDay, endDay, rowIndex }) => {
-                        const left = startDay * dayWidth;
-                        const width = Math.max((endDay - startDay + 1) * dayWidth, 42);
-                        const top = TASK_TOP + rowIndex * TASK_ROW_HEIGHT;
-
-                        return (
-                          <article
-                            className={`task-pill ${dragSession?.taskId === task.id ? 'dragging' : ''}`}
-                            key={task.id}
-                            style={{ left, top, width, borderColor: task.color }}
-                            onPointerDown={(event) => startDrag(event, task, 'move')}
-                          >
-                            <button
-                              type="button"
-                              className="resize-handle left"
-                              onPointerDown={(event) => {
-                                event.stopPropagation();
-                                startDrag(event, task, 'resize-left');
-                              }}
-                              aria-label={`Resize ${task.title} start`}
-                            />
-                            <GripVertical className="drag-grip" size={15} />
-                            <div className="task-content">
-                              <input
-                                value={task.title}
-                                onPointerDown={(event) => event.stopPropagation()}
-                                onChange={(event) => updateTask(task.id, { title: event.target.value })}
-                                aria-label="Task title"
-                              />
-                            </div>
-                            <span className="task-color-picker">
-                              <span className="task-color-swatch" style={{ background: task.color }} />
-                              <input
-                                className="task-color"
-                                type="color"
-                                value={task.color}
-                                onPointerDown={(event) => event.stopPropagation()}
-                                onChange={(event) => updateTask(task.id, { color: event.target.value })}
-                                aria-label="Task color"
-                              />
-                            </span>
-                            <button
-                              type="button"
-                              className="resize-handle right"
-                              onPointerDown={(event) => {
-                                event.stopPropagation();
-                                startDrag(event, task, 'resize-right');
-                              }}
-                              aria-label={`Resize ${task.title} end`}
-                            />
-                          </article>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
+      <PlannerHeader
+        roadmap={roadmap}
+        timelineRangeSelection={timelineRangeSelection}
+        timelineView={timelineView}
+        activeSnapMode={activeSnapMode}
+        fileInputRef={fileInputRef}
+        getMonthInputValue={getMonthInputValue}
+        onTitleChange={(title) => setRoadmap((currentRoadmap) => ({ ...currentRoadmap, title }))}
+        onSubtitleChange={(subtitle) => setRoadmap((currentRoadmap) => ({ ...currentRoadmap, subtitle }))}
+        onTimelineStartChange={updateTimelineStart}
+        onTimelineEndChange={updateTimelineEnd}
+        onViewChange={setTimelineView}
+        onSnapModeChange={setSnapMode}
+        onAddLane={addLane}
+        onExport={exportRoadmap}
+        onExportPdf={exportRoadmapPdf}
+        onImport={importRoadmap}
+      />
+      <RoadmapTimeline
+        roadmap={roadmap}
+        timelineRef={timelineRef}
+        timelineView={timelineView}
+        timelineYear={timelineYear}
+        timelineStartMonth={timelineStartMonth}
+        timelineMonthSpan={timelineMonthSpan}
+        dayCount={dayCount}
+        dayWidth={dayWidth}
+        timelineWidth={timelineWidth}
+        months={months}
+        quarters={quarters}
+        weeks={weeks}
+        draggingTaskId={dragSession?.taskId}
+        onStartDrag={startDrag}
+        onTaskChange={updateTask}
+        onLaneChange={(laneId, name) => setRoadmap((currentRoadmap) => ({
+          ...currentRoadmap,
+          lanes: currentRoadmap.lanes.map((lane) => lane.id === laneId ? { ...lane, name } : lane),
+        }))}
+        onAddTask={addTask}
+      />
     </main>
   );
 }
