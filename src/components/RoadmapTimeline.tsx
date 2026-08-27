@@ -5,7 +5,7 @@ import type { RoadmapState, RoadmapTask, TimelineView } from '../types';
 
 const MIN_LANE_HEIGHT = 86;
 const LANE_LABEL_WIDTH = 168;
-const TASK_HEIGHT = 56;
+const TASK_HEIGHT = 42;
 const TASK_TOP = 18;
 const TASK_GAP = 10;
 const TASK_ROW_HEIGHT = TASK_HEIGHT + TASK_GAP;
@@ -99,6 +99,7 @@ export function RoadmapTimeline({
                     return <article className={`task-pill ${draggingTaskId === task.id ? 'dragging' : ''}`} key={task.id} style={{ left: startDay * dayWidth, top: TASK_TOP + rowIndex * TASK_ROW_HEIGHT, width, borderColor: task.color }} onPointerDown={(event) => onStartDrag(event, task, 'move')}>
                       <button type="button" className="resize-handle left" onPointerDown={(event) => { event.stopPropagation(); onStartDrag(event, task, 'resize-left'); }} aria-label={`Resize ${task.title} start`} />
                       <GripVertical className="drag-grip" size={15} />
+                      <span className="task-dot" style={{ background: task.color }} aria-hidden="true" />
                       <div className="task-content"><input value={task.title} onPointerDown={(event) => event.stopPropagation()} onChange={(event) => onTaskChange(task.id, { title: event.target.value })} aria-label="Task title" /></div>
                       <span className="task-color-picker"><span className="task-color-swatch" style={{ background: task.color }} /><input className="task-color" type="color" value={task.color} onPointerDown={(event) => event.stopPropagation()} onChange={(event) => onTaskChange(task.id, { color: event.target.value })} aria-label="Task color" /></span>
                       <button type="button" className="resize-handle right" onPointerDown={(event) => { event.stopPropagation(); onStartDrag(event, task, 'resize-right'); }} aria-label={`Resize ${task.title} end`} />

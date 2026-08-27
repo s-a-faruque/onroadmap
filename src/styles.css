@@ -762,7 +762,7 @@ select {
   display: flex;
   align-items: center;
   gap: 7px;
-  height: 56px;
+  height: 42px;
   min-width: 42px;
   overflow: hidden;
   border: 2px solid;
@@ -786,6 +786,13 @@ select {
 .drag-grip {
   flex: 0 0 auto;
   color: var(--muted);
+}
+
+.task-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
 }
 
 .task-content {
