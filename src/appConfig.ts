@@ -25,9 +25,6 @@ export interface ThemeOption {
 }
 
 interface RoadmapAppConfig {
-  branding: {
-    companyName: string;
-  };
   timeline: {
     startYear: number;
     endYear?: number;
@@ -58,9 +55,6 @@ interface RoadmapAppConfig {
 }
 
 export const appConfig: RoadmapAppConfig = {
-  branding: {
-    companyName: '',
-  },
   timeline: {
     startYear: 2026,
     endYear: 2026,
@@ -102,7 +96,7 @@ export const appConfig: RoadmapAppConfig = {
     enableJsonImport: false,
     enablePdfDownload: true,
     pdfWatermark: {
-      enabled: true,
+      enabled: false,
       text: 'On Roadmap',
       opacity: 0.08,
       fontSize: 42,

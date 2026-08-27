@@ -18,7 +18,7 @@ const TIMELINE_RANGE_STORAGE_KEY = 'onroadmap.timelineRange.v1';
 
 const MIN_LANE_HEIGHT = 86;
 const LANE_LABEL_WIDTH = 168;
-const TASK_HEIGHT = 46;
+const TASK_HEIGHT = 56;
 const TASK_TOP = 18;
 const TASK_GAP = 10;
 const TASK_ROW_HEIGHT = TASK_HEIGHT + TASK_GAP;
@@ -247,7 +247,6 @@ function App() {
     ? snapMode
     : appConfig.controls.defaultSnapMode;
   const activeTheme = appConfig.themes.options.find((theme) => theme.id === appConfig.themes.defaultTheme) ?? appConfig.themes.options[0];
-  const companyName = appConfig.branding.companyName.trim();
   const timelineYear = configuredStartYear;
   const timelineRange = formatTimelineRange(timelineYear, timelineStartMonth, timelineMonthSpan);
   const dayCount = getYearDayCount(timelineYear, timelineStartMonth, timelineMonthSpan);
@@ -434,22 +433,28 @@ function App() {
         height: timelineElement.scrollHeight,
         windowWidth: timelineElement.scrollWidth,
         windowHeight: timelineElement.scrollHeight,
+        ignoreElements: (element) => element.classList.contains('task-color-picker'),
       });
       const image = canvas.toDataURL('image/png');
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
       const margin = 28;
-      const titleHeight = 28;
+      const titleHeight = 42;
       const imageWidth = pageWidth - margin * 2;
       const imageHeight = Math.min(
         (canvas.height * imageWidth) / canvas.width,
         pageHeight - margin * 2 - titleHeight,
       );
 
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(9);
+      pdf.setTextColor(107, 114, 128);
+      pdf.text(roadmap.subtitle, margin, margin + 11);
       pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(16);
-      pdf.text(`${companyName ? `${companyName} - ` : ''}${roadmap.title} ${timelineRange}`, margin, margin + 2);
+      pdf.setFontSize(18);
+      pdf.setTextColor(23, 33, 29);
+      pdf.text(roadmap.title, margin, margin + 32);
       pdf.addImage(image, 'PNG', margin, margin + titleHeight, imageWidth, imageHeight, undefined, 'FAST');
       const watermark = appConfig.controls.pdfWatermark;
       if (watermark.enabled) {
@@ -473,8 +478,9 @@ function App() {
         pdf.setGState(pdf.GState({ opacity: 1 }));
       }
       pdf.setTextColor(23, 33, 29);
-      pdf.setDrawColor(23, 33, 29);
+      pdf.setDrawColor(156, 163, 175);
       pdf.setLineWidth(1);
+      pdf.rect(margin, margin + titleHeight, imageWidth, imageHeight);
       pdf.rect(14, 14, pageWidth - 28, pageHeight - 28);
       pdf.save(`onroadmap-${timelineYear}.pdf`);
     } catch (error) {
@@ -526,7 +532,6 @@ function App() {
       <section className="topbar" aria-label="Roadmap controls">
         <div>
           <p className="eyebrow">
-            {companyName ? `${companyName} :: ` : ''}
             <input
               className="roadmap-subtitle"
               value={roadmap.subtitle}
@@ -541,7 +546,6 @@ function App() {
               onChange={(event) => setRoadmap((currentRoadmap) => ({ ...currentRoadmap, title: event.target.value }))}
               aria-label="Roadmap title"
             />
-            {companyName && <span className="company-name">{companyName}</span>}
           </h1>
         </div>
 
@@ -704,31 +708,18 @@ function App() {
                                 onChange={(event) => updateTask(task.id, { title: event.target.value })}
                                 aria-label="Task title"
                               />
-                              <div className="task-meta">
-                                <span className="color-dot" style={{ background: task.color }} />
-                                <input
-                                  value={task.tags.join(', ')}
-                                  onPointerDown={(event) => event.stopPropagation()}
-                                  onChange={(event) =>
-                                    updateTask(task.id, {
-                                      tags: event.target.value
-                                        .split(',')
-                                        .map((tag) => tag.trim())
-                                        .filter(Boolean),
-                                    })
-                                  }
-                                  aria-label="Task tags"
-                                />
-                              </div>
                             </div>
-                            <input
-                              className="task-color"
-                              type="color"
-                              value={task.color}
-                              onPointerDown={(event) => event.stopPropagation()}
-                              onChange={(event) => updateTask(task.id, { color: event.target.value })}
-                              aria-label="Task color"
-                            />
+                            <span className="task-color-picker">
+                              <span className="task-color-swatch" style={{ background: task.color }} />
+                              <input
+                                className="task-color"
+                                type="color"
+                                value={task.color}
+                                onPointerDown={(event) => event.stopPropagation()}
+                                onChange={(event) => updateTask(task.id, { color: event.target.value })}
+                                aria-label="Task color"
+                              />
+                            </span>
                             <button
                               type="button"
                               className="resize-handle right"
