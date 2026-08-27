@@ -104,3 +104,20 @@ export function quarterSegments(year: number, startMonth = 0, monthSpan = 12) {
     };
   });
 }
+
+export function weekSegments(year: number, startMonth = 0, monthSpan = 12) {
+  const timelineStart = getTimelineStart(year, startMonth);
+  const dayCount = getYearDayCount(year, startMonth, monthSpan);
+
+  return Array.from({ length: Math.ceil(dayCount / 7) }, (_, weekIndex) => {
+    const startDay = weekIndex * 7;
+    const start = addDays(timelineStart, startDay);
+    const remainingDays = dayCount - startDay;
+
+    return {
+      label: start.toLocaleString('en', { month: 'short', day: 'numeric', timeZone: 'UTC' }),
+      startDay,
+      days: Math.min(7, remainingDays),
+    };
+  });
+}

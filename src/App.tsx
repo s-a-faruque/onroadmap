@@ -9,6 +9,7 @@ import {
   monthSegments,
   quarterSegments,
   snapDay,
+  weekSegments,
 } from './dateMath';
 import { appConfig } from './appConfig';
 import { localRoadmapStore } from './storage';
@@ -371,6 +372,7 @@ function App() {
   const timelineWidth = dayCount * dayWidth;
   const months = useMemo(() => monthSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
   const quarters = useMemo(() => quarterSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
+  const weeks = useMemo(() => weekSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
   const laneTaskLayouts = useMemo(() => getLaneTaskLayouts(roadmap, timelineYear, timelineStartMonth, timelineMonthSpan), [roadmap, timelineYear, timelineStartMonth, timelineMonthSpan]);
 
   useEffect(() => {
@@ -757,7 +759,7 @@ function App() {
       <section className="timeline-card" aria-label="Roadmap timeline">
         <div className="timeline-scroll">
           <div ref={timelineRef} className="timeline" style={{ width: LANE_LABEL_WIDTH + timelineWidth }}>
-            <div className="timeline-header">
+            <div className={`timeline-header ${timelineView === 'week' ? 'weekly-header' : ''}`}>
               <div className="lane-header">Swimlanes</div>
               <div className="date-header" style={{ width: timelineWidth }}>
                 <div className="quarter-row">
@@ -772,21 +774,34 @@ function App() {
                   ))}
                 </div>
                 <div className="month-row">
-                {months.map((month) => (
-                  <div
-                    key={month.label}
-                    className="month-cell"
-                    style={{ left: month.startDay * dayWidth, width: month.days * dayWidth }}
-                  >
-                    {month.label}
-                  </div>
-                ))}
+                  {months.map((month) => (
+                    <div
+                      key={month.label}
+                      className="month-cell"
+                      style={{ left: month.startDay * dayWidth, width: month.days * dayWidth }}
+                    >
+                      {month.label}
+                    </div>
+                  ))}
                 </div>
+                {timelineView === 'week' && (
+                  <div className="week-row" aria-label="Weekly dates">
+                    {weeks.map((week) => (
+                      <div
+                        key={week.startDay}
+                        className="week-cell"
+                        style={{ left: week.startDay * dayWidth, width: week.days * dayWidth }}
+                      >
+                        {week.label}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
             <div className="timeline-body">
-              <div className="grid-lines" style={{ left: LANE_LABEL_WIDTH, width: timelineWidth }}>
+              <div className={`grid-lines ${timelineView === 'week' ? 'weekly-grid-lines' : ''}`} style={{ left: LANE_LABEL_WIDTH, width: timelineWidth }}>
                 {timelineView === 'week'
                   ? Array.from({ length: Math.ceil(dayCount / 7) + 1 }, (_, index) => (
                       <span key={index} style={{ left: index * 7 * dayWidth }} />

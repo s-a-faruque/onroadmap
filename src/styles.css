@@ -592,6 +592,10 @@ select {
   backdrop-filter: blur(12px);
 }
 
+.timeline-header.weekly-header {
+  height: 100px;
+}
+
 .lane-header,
 .lane-label {
   position: sticky;
@@ -636,6 +640,20 @@ select {
   bottom: 0;
 }
 
+.weekly-header .month-row {
+  bottom: auto;
+  height: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.week-row {
+  position: absolute;
+  top: 54px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
 .quarter-cell,
 .month-cell {
   position: absolute;
@@ -660,6 +678,20 @@ select {
   font-weight: 900;
 }
 
+.week-cell {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-right: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .timeline-body {
   position: relative;
 }
@@ -677,6 +709,10 @@ select {
   bottom: 0;
   width: 1px;
   background: var(--line);
+}
+
+.weekly-grid-lines span {
+  background: rgba(var(--ink-rgb), 0.2);
 }
 
 .lane-row {
