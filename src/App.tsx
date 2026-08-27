@@ -62,6 +62,7 @@ interface TimelineRange {
 
 function createInitialState(year: number, startMonth: number, monthSpan: number): RoadmapState {
   return {
+    title: 'Roadmap',
     year,
     lanes: [
       { id: 'engineering', name: 'Engineering' },
@@ -98,6 +99,10 @@ function createInitialState(year: number, startMonth: number, monthSpan: number)
       },
     ],
   };
+}
+
+function normalizeRoadmap(roadmap: RoadmapState): RoadmapState {
+  return { ...roadmap, title: roadmap.title?.trim() || 'Roadmap' };
 }
 
 function createTask(year: number, startMonth: number, monthSpan: number, laneId: string, index: number): RoadmapTask {
@@ -221,7 +226,11 @@ function App() {
   const timelineStartMonth = timelineRangeSelection.start.monthIndex;
   const configuredStartYear = timelineRangeSelection.start.year;
   const timelineMonthSpan = getMonthSpanFromRange(timelineRangeSelection);
-  const [roadmap, setRoadmap] = useState<RoadmapState>(() => localRoadmapStore.load() ?? createInitialState(configuredStartYear, timelineStartMonth, timelineMonthSpan));
+  const [roadmap, setRoadmap] = useState<RoadmapState>(() => {
+    const storedRoadmap = localRoadmapStore.load();
+
+    return storedRoadmap ? normalizeRoadmap(storedRoadmap) : createInitialState(configuredStartYear, timelineStartMonth, timelineMonthSpan);
+  });
   const [timelineView, setTimelineView] = useState<TimelineView>('month');
   const [snapMode, setSnapMode] = useState<SnapMode>(appConfig.controls.defaultSnapMode);
   const [dragSession, setDragSession] = useState<DragSession | null>(null);
@@ -233,6 +242,7 @@ function App() {
     ? snapMode
     : appConfig.controls.defaultSnapMode;
   const activeTheme = appConfig.themes.options.find((theme) => theme.id === appConfig.themes.defaultTheme) ?? appConfig.themes.options[0];
+  const companyName = appConfig.branding.companyName.trim();
   const timelineYear = configuredStartYear;
   const timelineRange = formatTimelineRange(timelineYear, timelineStartMonth, timelineMonthSpan);
   const dayCount = getYearDayCount(timelineYear, timelineStartMonth, timelineMonthSpan);
@@ -434,8 +444,33 @@ function App() {
 
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(16);
-      pdf.text(`onroadmap ${timelineRange}`, margin, margin + 2);
+      pdf.text(`${companyName ? `${companyName} - ` : ''}${roadmap.title} ${timelineRange}`, margin, margin + 2);
       pdf.addImage(image, 'PNG', margin, margin + titleHeight, imageWidth, imageHeight, undefined, 'FAST');
+      const watermark = appConfig.controls.pdfWatermark;
+      if (watermark.enabled) {
+        const watermarkColumns = Math.max(watermark.columns, 1);
+        const watermarkRows = Math.max(watermark.rows, 1);
+        const watermarkGState = pdf.GState({ opacity: watermark.opacity });
+
+        pdf.setGState(watermarkGState);
+        pdf.setTextColor(120, 120, 120);
+        pdf.setFontSize(watermark.fontSize);
+        for (let row = 0; row < watermarkRows; row += 1) {
+          for (let column = 0; column < watermarkColumns; column += 1) {
+            pdf.text(
+              watermark.text,
+              (pageWidth * (column + 0.5)) / watermarkColumns,
+              (pageHeight * (row + 0.5)) / watermarkRows,
+              { align: 'center', angle: watermark.angle },
+            );
+          }
+        }
+        pdf.setGState(pdf.GState({ opacity: 1 }));
+      }
+      pdf.setTextColor(23, 33, 29);
+      pdf.setDrawColor(23, 33, 29);
+      pdf.setLineWidth(1);
+      pdf.rect(14, 14, pageWidth - 28, pageHeight - 28);
       pdf.save(`onroadmap-${timelineYear}.pdf`);
     } catch (error) {
       console.error('Unable to export roadmap PDF', error);
@@ -456,7 +491,7 @@ function App() {
         throw new Error('Invalid roadmap payload');
       }
 
-      setRoadmap(nextRoadmap);
+      setRoadmap(normalizeRoadmap(nextRoadmap));
       event.target.value = '';
     });
   }
@@ -485,8 +520,16 @@ function App() {
     <main className="app-shell">
       <section className="topbar" aria-label="Roadmap controls">
         <div>
-          <p className="eyebrow">CSDS :: Web & Content Team roadmap</p>
-          <h1>Roadmap</h1>
+          <p className="eyebrow">{companyName ? `${companyName} :: ` : ''}Web & Content Team roadmap</p>
+          <h1>
+            <input
+              className="roadmap-title"
+              value={roadmap.title}
+              onChange={(event) => setRoadmap((currentRoadmap) => ({ ...currentRoadmap, title: event.target.value }))}
+              aria-label="Roadmap title"
+            />
+            {companyName && <span className="company-name">{companyName}</span>}
+          </h1>
         </div>
 
         <div className="controls">

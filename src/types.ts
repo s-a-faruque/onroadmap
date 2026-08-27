@@ -17,6 +17,7 @@ export interface RoadmapTask {
 }
 
 export interface RoadmapState {
+  title: string;
   year: number;
   lanes: RoadmapLane[];
   tasks: RoadmapTask[];

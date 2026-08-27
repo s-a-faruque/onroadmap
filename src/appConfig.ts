@@ -25,6 +25,9 @@ export interface ThemeOption {
 }
 
 interface RoadmapAppConfig {
+  branding: {
+    companyName: string;
+  };
   timeline: {
     startYear: number;
     endYear?: number;
@@ -42,10 +45,22 @@ interface RoadmapAppConfig {
     enableJsonExport: boolean;
     enableJsonImport: boolean;
     enablePdfDownload: boolean;
+    pdfWatermark: {
+      enabled: boolean;
+      text: string;
+      opacity: number;
+      fontSize: number;
+      angle: number;
+      columns: number;
+      rows: number;
+    };
   };
 }
 
 export const appConfig: RoadmapAppConfig = {
+  branding: {
+    companyName: '',
+  },
   timeline: {
     startYear: 2026,
     endYear: 2026,
@@ -86,5 +101,14 @@ export const appConfig: RoadmapAppConfig = {
     enableJsonExport: false,
     enableJsonImport: false,
     enablePdfDownload: true,
+    pdfWatermark: {
+      enabled: true,
+      text: 'On Roadmap',
+      opacity: 0.08,
+      fontSize: 42,
+      angle: 45,
+      columns: 3,
+      rows: 2,
+    },
   },
 };
