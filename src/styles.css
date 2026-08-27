@@ -72,16 +72,11 @@ button {
   text-transform: uppercase;
 }
 
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 27px;
-  height: 27px;
-  border-radius: 50%;
-  background: #e05f3e;
-  color: #fffdf4;
-  font-size: 0.76rem;
-  font-weight: 900;
+.brand-logo {
+  display: block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 .landing-nav-action,

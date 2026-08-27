@@ -46,7 +46,7 @@ export function PlannerHeader({
     <>
       <nav className="planner-nav" aria-label="Planner navigation">
         <div className="brand-lockup">
-          <span className="brand-mark">O</span>
+          <img className="brand-logo" src="/route.png" alt="Onroadmap logo" />
           <span>onroadmap</span>
         </div>
         <button className="planner-nav-action" type="button" onClick={() => { window.location.hash = ''; }}>

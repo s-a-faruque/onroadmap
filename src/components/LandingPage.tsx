@@ -42,7 +42,7 @@ export function LandingPage({ onOpenPlanner }: LandingPageProps) {
     <main className="landing-shell">
       <nav className="landing-nav" aria-label="Landing page navigation">
         <div className="brand-lockup">
-          <span className="brand-mark">O</span>
+          <img className="brand-logo" src="/route.png" alt="Onroadmap logo" />
           <span>onroadmap</span>
         </div>
         <button className="landing-nav-action" type="button" onClick={onOpenPlanner}>
