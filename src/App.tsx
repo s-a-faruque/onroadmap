@@ -209,6 +209,15 @@ function App() {
   const months = useMemo(() => monthSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
   const quarters = useMemo(() => quarterSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
   const weeks = useMemo(() => weekSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
+  const taskTableRows = useMemo(
+    () => [...roadmap.tasks]
+      .map((task) => ({
+        ...task,
+        laneName: roadmap.lanes.find((lane) => lane.id === task.laneId)?.name ?? 'Unassigned',
+      }))
+      .sort((firstTask, secondTask) => firstTask.startDate.localeCompare(secondTask.startDate) || firstTask.title.localeCompare(secondTask.title)),
+    [roadmap.lanes, roadmap.tasks],
+  );
 
   useEffect(() => {
     function handleHashChange() {
@@ -381,6 +390,57 @@ function App() {
     URL.revokeObjectURL(url);
   }
 
+  async function loadLogoImage() {
+    return new Promise<HTMLImageElement>((resolve, reject) => {
+      const logo = new Image();
+      logo.onload = () => resolve(logo);
+      logo.onerror = () => reject(new Error('Unable to load roadmap logo'));
+      logo.src = '/route.png';
+    });
+  }
+
+  async function exportTaskTable() {
+    const tableElement = document.querySelector('.task-table-panel') as HTMLElement | null;
+
+    if (!tableElement) {
+      return;
+    }
+
+    try {
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+        import('html2canvas'),
+        import('jspdf'),
+      ]);
+      const [canvas, logo] = await Promise.all([
+        html2canvas(tableElement, {
+          backgroundColor: activeTheme.colors.paper,
+          scale: 2,
+          useCORS: true,
+        }),
+        loadLogoImage(),
+      ]);
+      const image = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 24;
+      const titleHeight = 30;
+      const logoSize = 22;
+      const imageWidth = pageWidth - margin * 2;
+      const imageHeight = Math.min((canvas.height * imageWidth) / canvas.width, pageHeight - margin * 2 - titleHeight);
+
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(16);
+      pdf.setTextColor(23, 33, 29);
+      pdf.addImage(logo, 'PNG', margin, margin - 4, logoSize, logoSize);
+      pdf.text('Roadmap task inventory', margin + logoSize + 10, margin + 16);
+      pdf.addImage(image, 'PNG', margin, margin + titleHeight, imageWidth, imageHeight);
+      pdf.save(`onroadmap-tasks-${timelineYear}.pdf`);
+    } catch (error) {
+      console.error('Unable to export task table PDF', error);
+    }
+  }
+
   async function exportRoadmapPdf() {
     const timelineElement = timelineRef.current;
 
@@ -393,22 +453,25 @@ function App() {
         import('html2canvas'),
         import('jspdf'),
       ]);
-      const canvas = await html2canvas(timelineElement, {
-        backgroundColor: activeTheme.colors.paper,
-        scale: 2,
-        useCORS: true,
-        width: timelineElement.scrollWidth,
-        height: timelineElement.scrollHeight,
-        windowWidth: timelineElement.scrollWidth,
-        windowHeight: timelineElement.scrollHeight,
-        ignoreElements: (element) => element.classList.contains('task-color-picker'),
-      });
+      const [canvas, logo] = await Promise.all([
+        html2canvas(timelineElement, {
+          backgroundColor: activeTheme.colors.paper,
+          scale: 2,
+          useCORS: true,
+          width: timelineElement.scrollWidth,
+          height: timelineElement.scrollHeight,
+          windowWidth: timelineElement.scrollWidth,
+          windowHeight: timelineElement.scrollHeight,
+        }),
+        loadLogoImage(),
+      ]);
       const image = canvas.toDataURL('image/png');
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
       const margin = 28;
       const titleHeight = 42;
+      const logoSize = 26;
       const imageWidth = pageWidth - margin * 2;
       const imageHeight = Math.min(
         (canvas.height * imageWidth) / canvas.width,
@@ -418,11 +481,12 @@ function App() {
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(9);
       pdf.setTextColor(107, 114, 128);
-      pdf.text(roadmap.subtitle, margin, margin + 11);
+      pdf.text(roadmap.subtitle, margin + logoSize + 12, margin + 11);
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(18);
       pdf.setTextColor(23, 33, 29);
-      pdf.text(roadmap.title, margin, margin + 32);
+      pdf.addImage(logo, 'PNG', margin, margin - 6, logoSize, logoSize);
+      pdf.text(roadmap.title, margin + logoSize + 12, margin + 32);
       pdf.addImage(image, 'PNG', margin, margin + titleHeight, imageWidth, imageHeight, undefined, 'FAST');
       const watermark = appConfig.controls.pdfWatermark;
       if (watermark.enabled) {
@@ -537,6 +601,97 @@ function App() {
         }))}
         onAddTask={addTask}
       />
+      <section className="task-table-panel" aria-label="Task inventory table">
+        <div className="task-table-header">
+          <div>
+            <p className="eyebrow">Task inventory</p>
+            <h2>All task items</h2>
+          </div>
+          <div className="task-table-actions">
+            <span>{roadmap.tasks.length} tasks</span>
+            <button type="button" className="download-task-table" onClick={exportTaskTable}>Download PDF</button>
+          </div>
+        </div>
+        <div className="task-table-scroll">
+          <table className="task-table">
+            <thead>
+              <tr>
+                <th scope="col">Color</th>
+                <th scope="col">Title</th>
+                <th scope="col">Lane</th>
+                <th scope="col">Start</th>
+                <th scope="col">End</th>
+                <th scope="col">Tags</th>
+              </tr>
+            </thead>
+            <tbody>
+              {taskTableRows.map((task) => (
+                <tr key={task.id}>
+                  <td className="task-table-color-cell">
+                    <input
+                      type="color"
+                      value={task.color}
+                      aria-label={`Task color for ${task.title}`}
+                      onChange={(event) => updateTask(task.id, { color: event.target.value })}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      className="task-table-input"
+                      value={task.title}
+                      aria-label={`Task title: ${task.title}`}
+                      onChange={(event) => updateTask(task.id, { title: event.target.value })}
+                    />
+                  </td>
+                  <td>
+                    <select
+                      className="task-table-select"
+                      value={task.laneId}
+                      aria-label={`Lane for ${task.title}`}
+                      onChange={(event) => updateTask(task.id, { laneId: event.target.value })}
+                    >
+                      {roadmap.lanes.map((lane) => (
+                        <option key={lane.id} value={lane.id}>{lane.name}</option>
+                      ))}
+                    </select>
+                  </td>
+                  <td>
+                    <input
+                      type="date"
+                      className="task-table-date"
+                      value={task.startDate}
+                      aria-label={`Start date for ${task.title}`}
+                      onChange={(event) => updateTask(task.id, { startDate: event.target.value })}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="date"
+                      className="task-table-date"
+                      value={task.endDate}
+                      aria-label={`End date for ${task.title}`}
+                      onChange={(event) => updateTask(task.id, { endDate: event.target.value })}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      className="task-table-input"
+                      value={task.tags.join(', ')}
+                      aria-label={`Tags for ${task.title}`}
+                      onChange={(event) => updateTask(task.id, {
+                        tags: event.target.value
+                          .split(',')
+                          .map((tag) => tag.trim())
+                          .filter(Boolean),
+                      })}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
   );
 }
