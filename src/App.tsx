@@ -616,7 +616,6 @@ function App() {
           <table className="task-table">
             <thead>
               <tr>
-                <th scope="col">Color</th>
                 <th scope="col">Title</th>
                 <th scope="col">Lane</th>
                 <th scope="col">Start</th>
@@ -627,14 +626,6 @@ function App() {
             <tbody>
               {taskTableRows.map((task) => (
                 <tr key={task.id}>
-                  <td className="task-table-color-cell">
-                    <input
-                      type="color"
-                      value={task.color}
-                      aria-label={`Task color for ${task.title}`}
-                      onChange={(event) => updateTask(task.id, { color: event.target.value })}
-                    />
-                  </td>
                   <td>
                     <input
                       className="task-table-input"
