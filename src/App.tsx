@@ -46,7 +46,7 @@ interface TimelineRange {
 function createInitialState(year: number, startMonth: number, monthSpan: number): RoadmapState {
   return {
     title: 'Roadmap',
-    subtitle: 'Web & Content Team roadmap',
+    subtitle: 'ACME Engineering Team',
     year,
     lanes: [
       { id: 'engineering', name: 'Engineering' },
@@ -89,7 +89,7 @@ function normalizeRoadmap(roadmap: RoadmapState): RoadmapState {
   return {
     ...roadmap,
     title: roadmap.title?.trim() || 'Roadmap',
-    subtitle: roadmap.subtitle?.trim() || 'Web & Content Team roadmap',
+    subtitle: roadmap.subtitle?.trim() || 'ACME Engineering Team',
   };
 }
 
