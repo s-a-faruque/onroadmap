@@ -18,8 +18,8 @@ export function LandingPage({ onOpenPlanner }: LandingPageProps) {
     },
     {
       icon: SlidersHorizontal,
-      title: 'Stay aligned',
-      description: 'Snap movement to days, weeks, or months so planning stays fast and dates stay intentional.',
+      title: 'Zero Setup, 100% Private',
+      description: 'Your data stays on your machine. No logins, no servers tracking your project data, and sub-10ms load times.',
     },
     {
       icon: Palette,
@@ -53,9 +53,9 @@ export function LandingPage({ onOpenPlanner }: LandingPageProps) {
       <section className="landing-hero">
         <div className="hero-copy">
           <p className="landing-kicker">A clearer way to plan the year</p>
-          <h1>Make the work visible.</h1>
+          <h1>Plan your yearly product roadmap in seconds, not hours</h1>
           <p className="hero-description">
-            Onroadmap turns shifting projects into one calm, editable view your team can understand at a glance.
+            Fast, zero-login, and privacy-first. Build, organize, and export your timeline entirely inside your browser. No databases, no subscription traps, no setup.
           </p>
           <button className="hero-action" type="button" onClick={onOpenPlanner}>
             Start planning <ArrowRight size={18} />
@@ -115,7 +115,7 @@ export function LandingPage({ onOpenPlanner }: LandingPageProps) {
         </button>
       </section>
 
-      <footer className="landing-footer"><span>onroadmap</span><span>Plan clearly. Move deliberately.</span></footer>
+      <footer className="landing-footer"><span>flash roadmap</span><span>Plan clearly. Move deliberately.</span></footer>
     </main>
   );
 }
