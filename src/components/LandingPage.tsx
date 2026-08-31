@@ -45,9 +45,22 @@ export function LandingPage({ onOpenPlanner }: LandingPageProps) {
           <img className="brand-logo" src="/route.png" alt="Onroadmap logo" />
           <span>flash roadmap</span>
         </div>
-        <button className="landing-nav-action" type="button" onClick={onOpenPlanner}>
-          Open planner <ArrowRight size={16} />
-        </button>
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <button 
+            className="landing-nav-action" 
+            type="button" 
+            onClick={() => {
+              if (window.Tally) {
+                window.Tally.openPopup('KYjMLX');
+              }
+            }}
+          >
+            Feedback
+          </button>
+          <button className="landing-nav-action" type="button" onClick={onOpenPlanner}>
+            Open planner <ArrowRight size={16} />
+          </button>
+        </div>
       </nav>
 
       <section className="landing-hero">

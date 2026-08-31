@@ -429,7 +429,7 @@ button {
 
 .roadmap-subtitle {
   width: min(44ch, 100%);
-  padding: 0;
+  padding: 0 4px;
   border: 0;
   outline: 0;
   background: transparent;
@@ -437,6 +437,21 @@ button {
   font: inherit;
   letter-spacing: inherit;
   text-transform: inherit;
+  cursor: text;
+  border-bottom: 1px solid transparent;
+  transition: border-color 150ms ease, background-color 150ms ease;
+  margin: 0 -4px;
+}
+
+.roadmap-subtitle:hover {
+  border-bottom-color: rgba(var(--ink-rgb), 0.15);
+  background-color: rgba(var(--ink-rgb), 0.03);
+}
+
+.roadmap-subtitle:focus {
+  outline: 0;
+  border-bottom-color: var(--accent);
+  background-color: rgba(var(--ink-rgb), 0.04);
 }
 
 h1 {
@@ -448,13 +463,28 @@ h1 {
 
 .roadmap-title {
   width: 6.5em;
-  padding: 0;
+  padding: 0 4px;
   border: 0;
   outline: 0;
   background: transparent;
   color: inherit;
   font: inherit;
   font-weight: inherit;
+  cursor: text;
+  border-bottom: 2px solid transparent;
+  transition: border-color 150ms ease, background-color 150ms ease;
+  margin: 0 -4px;
+}
+
+.roadmap-title:hover {
+  border-bottom-color: rgba(var(--ink-rgb), 0.15);
+  background-color: rgba(var(--ink-rgb), 0.03);
+}
+
+.roadmap-title:focus {
+  outline: 0;
+  border-bottom-color: var(--accent);
+  background-color: rgba(var(--ink-rgb), 0.04);
 }
 
 .controls {

@@ -49,9 +49,26 @@ export function PlannerHeader({
           <img className="brand-logo" src="/route.png" alt="Onroadmap logo" />
           <span>flash roadmap</span>
         </div>
-        <button className="planner-nav-action" type="button" onClick={() => { window.location.hash = ''; }}>
-          Overview
-        </button>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <button 
+            className="planner-nav-action" 
+            type="button" 
+            onClick={() => window.location.hash = ''}
+          >
+            Overview
+          </button>
+          <button 
+            className="planner-nav-action" 
+            type="button" 
+            onClick={() => {
+              if (window.Tally) {
+                window.Tally.openPopup('KYjMLX');
+              }
+            }}
+          >
+            Feedback
+          </button>
+        </div>
       </nav>
       <section className="topbar" aria-label="Roadmap controls">
         <div>
