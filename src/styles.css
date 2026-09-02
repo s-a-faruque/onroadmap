@@ -7,18 +7,18 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --app-bg: whitesmoke;
-  --ink: #17211d;
-  --ink-rgb: 23, 33, 29;
-  --muted: #68736c;
-  --paper: #fffdf4;
-  --paper-rgb: 255, 253, 244;
-  --line: #d8dfce;
-  --line-rgb: 216, 223, 206;
-  --track: #f6f3e8;
-  --accent: #e05f3e;
-  --green: #305f4e;
-  --shadow: 0 24px 60px rgba(38, 47, 41, 0.14);
+  --app-bg: #eef1ed;
+  --ink: #1f2c30;
+  --ink-rgb: 31, 44, 48;
+  --muted: #64716f;
+  --paper: #fbfaf5;
+  --paper-rgb: 251, 250, 245;
+  --line: #cbd5d0;
+  --line-rgb: 203, 213, 208;
+  --track: #e8eeea;
+  --accent: #b65f49;
+  --green: #2f5d56;
+  --shadow: 0 24px 60px rgba(31, 44, 48, 0.12);
 }
 
 * {
@@ -46,7 +46,7 @@ button {
   width: min(1240px, calc(100vw - 48px));
   margin: 0 auto;
   padding: 28px 0 34px;
-  color: #17211d;
+  color: var(--ink);
 }
 
 .landing-nav,
@@ -59,7 +59,7 @@ button {
 
 .landing-nav {
   padding-bottom: 28px;
-  border-bottom: 1px solid #cfd7cd;
+  border-bottom: 1px solid #cbd5d0;
 }
 
 .brand-lockup {
@@ -86,7 +86,7 @@ button {
   gap: 10px;
   border: 0;
   background: transparent;
-  color: #17211d;
+  color: var(--ink);
   font-weight: 800;
 }
 
@@ -120,7 +120,7 @@ button {
 
 .landing-kicker {
   margin: 0 0 18px;
-  color: #b34e32;
+  color: #a65342;
   font-size: 0.74rem;
   font-weight: 900;
   letter-spacing: 0.12em;
@@ -131,8 +131,8 @@ button {
 .section-intro h2,
 .landing-cta h2 {
   margin: 0;
-  color: #17211d;
-  font-family: Georgia, serif;
+  color: var(--ink);
+  font-family: 'Google Sans', sans-serif;
   font-weight: 700;
   letter-spacing: -0.03em;
 }
@@ -140,35 +140,35 @@ button {
 .hero-copy h1 {
   max-width: 520px;
   font-size: clamp(1.7rem, 7vw, 2.5rem);
-  line-height: 0.9;
+  line-height: 1.2;
 }
 
 .hero-description {
   max-width: 390px;
   margin: 30px 0 26px;
-  color: #5b6860;
+  color: #5d6b6b;
   font-size: 1.05rem;
   line-height: 1.6;
 }
 
 .hero-action {
   padding: 12px 0;
-  border-bottom: 2px solid #e05f3e;
+  border-bottom: 2px solid #b65f49;
   font-size: 0.95rem;
 }
 
 .hero-note {
   margin: 54px 0 0;
-  color: #7b867f;
+  color: #768280;
   font-size: 0.76rem;
 }
 
 .preview-stage {
   position: relative;
   padding: 22px 22px 14px;
-  border: 1px solid #c3cdc1;
-  background: #fffdf4;
-  box-shadow: 18px 18px 0 #dce4d8;
+  border: 1px solid #b9c8c1;
+  background: #fbfaf5;
+  box-shadow: 18px 18px 0 #d4e0da;
   transform: rotate(1.2deg);
 }
 
@@ -195,8 +195,8 @@ button {
 .preview-header strong {
   display: block;
   margin-top: 6px;
-  font-family: Georgia, serif;
-  font-size: 2.15rem;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 1.7rem;
   line-height: 0.95;
 }
 
@@ -269,7 +269,7 @@ button {
   padding: 0 10px;
   border: 2px solid;
   border-radius: 6px;
-  background: #fffdf4;
+  background: #ffffff;
   color: #17211d;
   font-size: 0.68rem;
   font-weight: 800;
@@ -326,15 +326,15 @@ button {
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border-top: 1px solid #cfd7cd;
-  border-left: 1px solid #cfd7cd;
+  border-top: 1px solid #b9cbc2;
+  border-left: 1px solid #b9cbc2;
 }
 
 .feature-item {
   min-height: 220px;
   padding: 26px 28px 30px;
-  border-right: 1px solid #cfd7cd;
-  border-bottom: 1px solid #cfd7cd;
+  border-right: 1px solid #b9cbc2;
+  border-bottom: 1px solid #b9cbc2;
 }
 
 .feature-icon {
@@ -344,13 +344,13 @@ button {
   height: 38px;
   margin-bottom: 30px;
   border-radius: 50%;
-  background: #e9eee6;
-  color: #2f6372;
+  background: #f7faf6;
+  color: #3f6f72;
 }
 
 .feature-item h3 {
   margin: 0 0 10px;
-  color: #17211d;
+  color: var(--ink);
   font-size: 1rem;
   font-weight: 800;
 }
@@ -358,18 +358,20 @@ button {
 .feature-item p {
   max-width: 250px;
   margin: 0;
-  color: #68736c;
+  color: #64716f;
   font-size: 0.9rem;
   line-height: 1.55;
 }
 
 .landing-cta {
+  margin: 0 -24px;
   display: flex;
   align-items: end;
   justify-content: space-between;
   gap: 30px;
-  padding: 72px 0 78px;
-  border-top: 1px solid #cfd7cd;
+  padding: 72px 24px 78px;
+  border-bottom: 1px solid #c4d1d4;
+  
 }
 
 .landing-cta .landing-kicker {
@@ -1003,6 +1005,16 @@ select {
     display: block;
     min-height: 0;
     padding: 58px 0 74px;
+  }
+
+  .feature-section {
+    margin: 0 -14px;
+    padding: 58px 14px 74px;
+  }
+
+  .landing-cta {
+    margin: 0 -14px;
+    padding: 58px 14px 64px;
   }
 
   .hero-copy h1 {

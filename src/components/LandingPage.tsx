@@ -65,7 +65,7 @@ export function LandingPage({ onOpenPlanner }: LandingPageProps) {
 
       <section className="landing-hero">
         <div className="hero-copy">
-          <p className="landing-kicker">A clearer way to plan the year</p>
+          <p className="landing-kicker">A clearer and simpler way to plan the year</p>
           <h1>Plan your yearly product roadmap in seconds, not hours</h1>
           <p className="hero-description">
             Fast, zero-login, and privacy-first. Build, organize, and export your timeline entirely inside your browser. No databases, no subscription traps, no setup.
