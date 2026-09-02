@@ -17,6 +17,7 @@ import { PlannerHeader } from './components/PlannerHeader';
 import { DragMode, RoadmapTimeline } from './components/RoadmapTimeline';
 import { LandingPage } from './components/LandingPage';
 import { TaskInventory } from './components/TaskInventory';
+import { Analytics } from '@vercel/analytics/react';
 
 const TIMELINE_RANGE_STORAGE_KEY = 'onroadmap.timelineRange.v1';
 
@@ -593,6 +594,7 @@ function App() {
         onAddTask={addTask}
       />
       <TaskInventory roadmap={roadmap} onTaskChange={updateTask} onExport={exportTaskTable} />
+      <Analytics />
     </main>
   );
 }
