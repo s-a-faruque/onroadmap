@@ -102,6 +102,22 @@ export function LandingPage({ onOpenPlanner }: LandingPageProps) {
         </div>
       </section>
 
+      <section className="illustration-section" aria-labelledby="illustration-heading">
+        <div className="illustration-frame">
+          <img src="/21424.jpg" alt="Person planning ideas on a flip chart" />
+        </div>
+        <div className="illustration-copy">
+          <p className="landing-kicker">Make the shape of work visible</p>
+          <h2 id="illustration-heading">A plan you can see, share, and keep moving.</h2>
+          <p>
+            Turn scattered ideas into a timeline that gives every next step a place. Keep the big picture close while the details change underneath it.
+          </p>
+          <button className="hero-action illustration-cta" type="button" onClick={onOpenPlanner}>
+            Open the planner <ArrowRight size={18} />
+          </button>
+        </div>
+      </section>
+
       <section className="feature-section" aria-labelledby="feature-heading">
         <div className="section-intro">
           <p className="landing-kicker">One surface, fewer loose ends</p>
