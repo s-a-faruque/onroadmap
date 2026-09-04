@@ -445,6 +445,110 @@ button {
   text-transform: uppercase;
 }
 
+.landing-footer-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.landing-footer-link {
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+.landing-footer-link:hover,
+.landing-footer-link:focus-visible {
+  color: var(--ink);
+}
+
+.privacy-overlay {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(31, 44, 48, 0.48);
+}
+
+.privacy-dialog {
+  width: min(680px, 100%);
+  max-height: min(760px, calc(100vh - 48px));
+  overflow: auto;
+  padding: 32px;
+  border: 1px solid #b9c8c1;
+  background: var(--paper);
+  box-shadow: 0 24px 70px rgba(31, 44, 48, 0.22);
+}
+
+.privacy-dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.privacy-dialog-header .landing-kicker {
+  margin-bottom: 12px;
+}
+
+.privacy-dialog h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  line-height: 1;
+}
+
+.privacy-close {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+}
+
+.privacy-close:hover,
+.privacy-close:focus-visible {
+  background: var(--green);
+  color: var(--paper);
+}
+
+.privacy-dialog-content {
+  color: #5d6b6b;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.privacy-updated {
+  margin: 20px 0 28px;
+  color: #79877c;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.privacy-dialog h3 {
+  margin: 24px 0 6px;
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.privacy-dialog-content p:not(.privacy-updated) {
+  margin: 0;
+}
+
 .app-shell {
   width: min(1480px, calc(100vw - 28px));
   margin: 0 auto;
@@ -1142,6 +1246,20 @@ select {
     align-items: flex-start;
     flex-direction: column;
     gap: 8px;
+  }
+
+  .landing-footer-links {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .privacy-overlay {
+    padding: 14px;
+  }
+
+  .privacy-dialog {
+    padding: 24px;
   }
 
   .app-shell {

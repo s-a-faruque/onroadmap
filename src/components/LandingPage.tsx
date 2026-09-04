@@ -1,10 +1,12 @@
-import { ArrowRight, CalendarDays, FileDown, GripVertical, Palette, Save, SlidersHorizontal } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight, CalendarDays, FileDown, GripVertical, Palette, Save, SlidersHorizontal, X } from 'lucide-react';
 
 interface LandingPageProps {
   onOpenPlanner: () => void;
 }
 
 export function LandingPage({ onOpenPlanner }: LandingPageProps) {
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const features = [
     {
       icon: CalendarDays,
@@ -144,7 +146,56 @@ export function LandingPage({ onOpenPlanner }: LandingPageProps) {
         </button>
       </section>
 
-      <footer className="landing-footer"><span>flash roadmap</span><span>Plan clearly. Move deliberately.</span></footer>
+      <footer className="landing-footer">
+        <span>&copy; 2026 Flash Roadmap. All rights reserved.</span>
+        <span className="landing-footer-links">
+          <span>Plan clearly. Move deliberately.</span>
+          <button className="landing-footer-link" type="button" onClick={() => setShowPrivacyPolicy(true)}>
+            Privacy Policy
+          </button>
+        </span>
+      </footer>
+
+      {showPrivacyPolicy && (
+        <div className="privacy-overlay" role="presentation" onClick={() => setShowPrivacyPolicy(false)}>
+          <section
+            className="privacy-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="privacy-policy-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="privacy-dialog-header">
+              <div>
+                <p className="landing-kicker">Your data, clearly explained</p>
+                <h2 id="privacy-policy-title">Privacy Policy</h2>
+              </div>
+              <button className="privacy-close" type="button" aria-label="Close privacy policy" onClick={() => setShowPrivacyPolicy(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="privacy-dialog-content">
+              <p className="privacy-updated">Last updated September 4, 2026</p>
+              <h3>Roadmap data</h3>
+              <p>
+                Flash Roadmap stores the roadmaps and timeline settings you create in your browser&apos;s local storage. This data is not sent to our servers, and we do not have access to it. Clearing your browser data will remove locally stored roadmaps, so use the JSON export when you need a backup.
+              </p>
+              <h3>Analytics</h3>
+              <p>
+                We use Vercel Analytics to understand aggregate website usage and improve the product. Vercel may process technical information about visits in accordance with its own privacy policy.
+              </p>
+              <h3>Feedback</h3>
+              <p>
+                If you submit feedback, it is handled by Tally, the embedded feedback service. Please avoid including confidential information in feedback submissions. Tally&apos;s privacy policy applies to information submitted through that form.
+              </p>
+              <h3>Changes and contact</h3>
+              <p>
+                We may update this policy as the product changes. The date above shows when it was last revised. For privacy questions, please use the Feedback link on this page.
+              </p>
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }
