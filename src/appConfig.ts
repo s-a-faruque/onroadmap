@@ -69,7 +69,7 @@ export const appConfig: RoadmapAppConfig = {
         id: 'cool-light',
         label: 'Cool light',
         colors: {
-          appBackground: '#f4f7f9',
+          appBackground: '#ffffff',
           ink: '#1b2430',
           inkRgb: '27, 36, 48',
           muted: '#607080',
