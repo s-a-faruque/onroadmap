@@ -1,5 +1,5 @@
-import { PointerEvent as ReactPointerEvent, RefObject, useMemo } from 'react';
-import { GripVertical, Plus } from 'lucide-react';
+import { PointerEvent as ReactPointerEvent, RefObject, useMemo, useState } from 'react';
+import { GripVertical, Plus, Trash2 } from 'lucide-react';
 import { dateToDay } from '../dateMath';
 import type { RoadmapState, RoadmapTask, TimelineView } from '../types';
 
@@ -40,7 +40,9 @@ interface RoadmapTimelineProps {
   draggingTaskId: string | undefined;
   onStartDrag: (event: ReactPointerEvent, task: RoadmapTask, mode: DragMode) => void;
   onTaskChange: (taskId: string, updates: Partial<RoadmapTask>) => void;
+  onDeleteTask: (taskId: string) => void;
   onLaneChange: (laneId: string, name: string) => void;
+  onDeleteLane: (laneId: string) => void;
   onAddTask: (laneId: string) => void;
 }
 
@@ -66,9 +68,10 @@ function getLaneTaskLayouts(roadmap: RoadmapState, timelineYear: number, startMo
 export function RoadmapTimeline({
   roadmap, timelineRef, timelineView, timelineYear, timelineStartMonth, timelineMonthSpan,
   dayCount, dayWidth, timelineWidth, months, quarters, weeks, draggingTaskId,
-  onStartDrag, onTaskChange, onLaneChange, onAddTask,
+  onStartDrag, onTaskChange, onDeleteTask, onLaneChange, onDeleteLane, onAddTask,
 }: RoadmapTimelineProps) {
   const laneTaskLayouts = useMemo(() => getLaneTaskLayouts(roadmap, timelineYear, timelineStartMonth, timelineMonthSpan), [roadmap, timelineYear, timelineStartMonth, timelineMonthSpan]);
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
 
   return (
     <section className="timeline-card" aria-label="Roadmap timeline">
@@ -97,16 +100,34 @@ export function RoadmapTimeline({
                     onChange={(event) => onLaneChange(lane.id, event.target.value)}
                   />
                   <button type="button" onClick={() => onAddTask(lane.id)} aria-label={`Add task to ${lane.name}`}><Plus size={15} /></button>
+                  <button type="button" className="delete-lane-button" onClick={() => onDeleteLane(lane.id)} disabled={roadmap.lanes.length === 1} aria-label={`Delete ${lane.name} lane`}><Trash2 size={15} /></button>
                 </div>
                 <div className="lane-track" style={{ width: timelineWidth }}>
                   {(laneLayout?.tasks ?? []).map(({ task, startDay, endDay, rowIndex }) => {
                     const width = Math.max((endDay - startDay + 1) * dayWidth, 42);
-                    return <article className={`task-pill ${draggingTaskId === task.id ? 'dragging' : ''}`} key={task.id} style={{ left: startDay * dayWidth, top: TASK_TOP + rowIndex * TASK_ROW_HEIGHT, width, borderColor: task.color }} onPointerDown={(event) => onStartDrag(event, task, 'move')}>
+                    const hasAdditionalLabels = task.tags.length > 1;
+                    const isLabelsExpanded = expandedTaskId === task.id;
+                    return <article className={`task-pill ${draggingTaskId === task.id ? 'dragging' : ''}`} key={task.id} title={task.tags.join(', ')} style={{ left: startDay * dayWidth, top: TASK_TOP + rowIndex * TASK_ROW_HEIGHT, width, borderColor: task.color }} onPointerDown={(event) => onStartDrag(event, task, 'move')}>
                       <button type="button" className="resize-handle left" onPointerDown={(event) => { event.stopPropagation(); onStartDrag(event, task, 'resize-left'); }} aria-label={`Resize ${task.title} start`} />
                       <GripVertical className="drag-grip" size={15} />
                       <span className="task-dot" style={{ background: task.color }} aria-hidden="true" />
                       <div className="task-content"><input value={task.title} onPointerDown={(event) => event.stopPropagation()} onChange={(event) => onTaskChange(task.id, { title: event.target.value })} aria-label="Task title" /></div>
+                      {task.tags.length > 0 && <span className="task-labels" aria-label={`Labels: ${task.tags.join(', ')}`}>
+                        <span className="task-label">{task.tags[0]}</span>
+                        {hasAdditionalLabels && <button
+                          type="button"
+                          className="task-label-count"
+                          aria-expanded={isLabelsExpanded}
+                          aria-label={`${task.tags.length - 1} additional label${task.tags.length === 2 ? '' : 's'}`}
+                          onPointerDown={(event) => event.stopPropagation()}
+                          onClick={() => setExpandedTaskId(isLabelsExpanded ? null : task.id)}
+                        >+{task.tags.length - 1}</button>}
+                        {isLabelsExpanded && <span className="task-label-popover" role="list" aria-label="Additional labels">
+                          {task.tags.slice(1).map((tag, index) => <span key={`${tag}-${index}`} role="listitem">{tag}</span>)}
+                        </span>}
+                      </span>}
                       <span className="task-color-picker"><span className="task-color-swatch" style={{ background: task.color }} /><input className="task-color" type="color" value={task.color} onPointerDown={(event) => event.stopPropagation()} onChange={(event) => onTaskChange(task.id, { color: event.target.value })} aria-label="Task color" /></span>
+                      <button type="button" className="delete-task-button timeline-delete-task" onPointerDown={(event) => event.stopPropagation()} onClick={() => onDeleteTask(task.id)} aria-label={`Delete ${task.title}`}><Trash2 size={14} /></button>
                       <button type="button" className="resize-handle right" onPointerDown={(event) => { event.stopPropagation(); onStartDrag(event, task, 'resize-right'); }} aria-label={`Resize ${task.title} end`} />
                     </article>;
                   })}

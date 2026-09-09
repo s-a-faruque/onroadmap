@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { Trash2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import type { RoadmapState, RoadmapTask } from '../types';
 
 interface TaskTableRow extends RoadmapTask {
@@ -8,10 +9,13 @@ interface TaskTableRow extends RoadmapTask {
 interface TaskInventoryProps {
   roadmap: RoadmapState;
   onTaskChange: (taskId: string, updates: Partial<RoadmapTask>) => void;
+  onDeleteTask: (taskId: string) => void;
+  onClearTasks: () => void;
   onExport: () => void;
 }
 
-export function TaskInventory({ roadmap, onTaskChange, onExport }: TaskInventoryProps) {
+export function TaskInventory({ roadmap, onTaskChange, onDeleteTask, onClearTasks, onExport }: TaskInventoryProps) {
+  const [labelDrafts, setLabelDrafts] = useState<Record<string, string>>({});
   const taskTableRows = useMemo<TaskTableRow[]>(
     () => [...roadmap.tasks]
       .map((task) => ({
@@ -22,6 +26,12 @@ export function TaskInventory({ roadmap, onTaskChange, onExport }: TaskInventory
     [roadmap.lanes, roadmap.tasks],
   );
 
+  useEffect(() => {
+    setLabelDrafts((currentDrafts) => Object.fromEntries(
+      roadmap.tasks.map((task) => [task.id, currentDrafts[task.id] ?? task.tags.join(', ')]),
+    ));
+  }, [roadmap.tasks]);
+
   return (
     <section className="task-table-panel" aria-label="Task inventory table">
       <div className="task-table-header">
@@ -31,6 +41,7 @@ export function TaskInventory({ roadmap, onTaskChange, onExport }: TaskInventory
         </div>
         <div className="task-table-actions">
           <span>{roadmap.tasks.length} tasks</span>
+          <button type="button" className="clear-tasks" onClick={onClearTasks} disabled={roadmap.tasks.length === 0}>Clear all</button>
           <button type="button" className="download-task-table" onClick={onExport}>Download PDF</button>
         </div>
       </div>
@@ -42,7 +53,8 @@ export function TaskInventory({ roadmap, onTaskChange, onExport }: TaskInventory
               <th scope="col">Lane</th>
               <th scope="col">Start</th>
               <th scope="col">End</th>
-              <th scope="col">Tags</th>
+              <th scope="col">Labels</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -89,15 +101,22 @@ export function TaskInventory({ roadmap, onTaskChange, onExport }: TaskInventory
                 <td>
                   <input
                     className="task-table-input"
-                    value={task.tags.join(', ')}
-                    aria-label={`Tags for ${task.title}`}
-                    onChange={(event) => onTaskChange(task.id, {
-                      tags: event.target.value
+                    value={labelDrafts[task.id] ?? task.tags.join(', ')}
+                    placeholder="Label 1, Label 2"
+                    aria-label={`Labels for ${task.title}`}
+                    onChange={(event) => setLabelDrafts((currentDrafts) => ({ ...currentDrafts, [task.id]: event.target.value }))}
+                    onBlur={() => onTaskChange(task.id, {
+                      tags: (labelDrafts[task.id] ?? '')
                         .split(',')
                         .map((tag) => tag.trim())
                         .filter(Boolean),
                     })}
                   />
+                </td>
+                <td>
+                  <button type="button" className="delete-task-button" onClick={() => onDeleteTask(task.id)} aria-label={`Delete ${task.title}`}>
+                    <Trash2 size={15} />
+                  </button>
                 </td>
               </tr>
             ))}

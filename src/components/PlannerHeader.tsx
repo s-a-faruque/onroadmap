@@ -106,7 +106,7 @@ export function PlannerHeader({
             </select>
           )}
 
-          <button type="button" className="icon-button" onClick={onAddLane} title="Add lane" aria-label="Add lane"><Plus size={18} /></button>
+          <button type="button" className="icon-button add-lane-button" onClick={onAddLane} title="Add swimlane" aria-label="Add swimlane"><Plus size={18} /><span>Add swimlane</span></button>
           {appConfig.controls.enableJsonExport && <button type="button" className="icon-button" onClick={onExport} title="Export JSON" aria-label="Export JSON"><Download size={18} /></button>}
           {appConfig.controls.enablePdfDownload && <button type="button" className="icon-button" onClick={onExportPdf} title="Download PDF" aria-label="Download PDF"><FileDown size={18} /></button>}
           {appConfig.controls.enableJsonImport && (

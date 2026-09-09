@@ -749,6 +749,14 @@ select {
   background: rgba(var(--paper-rgb), 0.82);
 }
 
+.add-lane-button {
+  display: inline-flex;
+  width: auto;
+  gap: 7px;
+  padding: 0 12px;
+  font-size: 0.85rem;
+}
+
 .hidden-input {
   display: none;
 }
@@ -942,6 +950,15 @@ select {
   border-color: var(--line);
 }
 
+.lane-label .delete-lane-button {
+  color: var(--accent);
+}
+
+.lane-label .delete-lane-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
 .lane-track {
   position: relative;
   flex: 0 0 auto;
@@ -955,8 +972,8 @@ select {
   gap: 7px;
   height: 42px;
   min-width: 42px;
-  overflow: hidden;
-  border: 2px solid;
+  overflow: visible;
+  border: 1px solid;
   border-radius: 8px;
   background: var(--paper);
   box-shadow: none;
@@ -1001,6 +1018,60 @@ select {
   font-weight: 400;
 }
 
+.task-labels {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  max-width: 132px;
+  align-items: center;
+  gap: 3px;
+  overflow: hidden;
+  flex: 0 1 auto;
+}
+
+.task-label,
+.task-label-count {
+  border: 0;
+  cursor: pointer;
+  max-width: 58px;
+  overflow: hidden;
+  flex: 0 1 auto;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: rgba(var(--ink-rgb), 0.08);
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-label-count {
+  flex: 0 0 auto;
+  max-width: none;
+  background: rgba(var(--ink-rgb), 0.14);
+}
+
+.task-label-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 8;
+  display: grid;
+  min-width: 120px;
+  max-width: 190px;
+  gap: 5px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  box-shadow: 0 10px 24px rgba(var(--ink-rgb), 0.16);
+  color: var(--ink);
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: normal;
+}
+
 .task-color-picker {
   position: relative;
   width: 18px;
@@ -1027,6 +1098,25 @@ select {
   border: 0;
   opacity: 0;
   cursor: pointer;
+}
+
+.delete-task-button {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--accent);
+}
+
+.timeline-delete-task {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  border: 0;
 }
 
 .resize-handle {
@@ -1094,6 +1184,22 @@ select {
   color: var(--paper);
   font-size: 0.82rem;
   font-weight: 800;
+}
+
+.clear-tasks {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.clear-tasks:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .task-table-scroll {

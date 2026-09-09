@@ -352,6 +352,27 @@ function App() {
     }));
   }
 
+  function deleteTask(taskId: string) {
+    const task = roadmap.tasks.find((currentTask) => currentTask.id === taskId);
+
+    if (!task || !window.confirm(`Delete ${task.title || 'this task'}?`)) {
+      return;
+    }
+
+    setRoadmap((currentRoadmap) => ({
+      ...currentRoadmap,
+      tasks: currentRoadmap.tasks.filter((currentTask) => currentTask.id !== taskId),
+    }));
+  }
+
+  function clearTasks() {
+    if (roadmap.tasks.length === 0 || !window.confirm('Clear all tasks from this roadmap?')) {
+      return;
+    }
+
+    setRoadmap((currentRoadmap) => ({ ...currentRoadmap, tasks: [] }));
+  }
+
   function addLane() {
     const laneName = `Lane ${roadmap.lanes.length + 1}`;
     const lane = { id: crypto.randomUUID(), name: laneName };
@@ -360,6 +381,21 @@ function App() {
       ...currentRoadmap,
       lanes: [...currentRoadmap.lanes, lane],
       tasks: [...currentRoadmap.tasks, createTask(timelineYear, timelineStartMonth, timelineMonthSpan, lane.id, currentRoadmap.tasks.length)],
+    }));
+  }
+
+  function deleteLane(laneId: string) {
+    const lane = roadmap.lanes.find((currentLane) => currentLane.id === laneId);
+    const taskCount = roadmap.tasks.filter((task) => task.laneId === laneId).length;
+
+    if (!lane || roadmap.lanes.length === 1 || !window.confirm(`Delete ${lane.name} and its ${taskCount} task${taskCount === 1 ? '' : 's'}?`)) {
+      return;
+    }
+
+    setRoadmap((currentRoadmap) => ({
+      ...currentRoadmap,
+      lanes: currentRoadmap.lanes.filter((currentLane) => currentLane.id !== laneId),
+      tasks: currentRoadmap.tasks.filter((task) => task.laneId !== laneId),
     }));
   }
 
@@ -587,13 +623,15 @@ function App() {
         draggingTaskId={dragSession?.taskId}
         onStartDrag={startDrag}
         onTaskChange={updateTask}
+        onDeleteTask={deleteTask}
         onLaneChange={(laneId, name) => setRoadmap((currentRoadmap) => ({
           ...currentRoadmap,
           lanes: currentRoadmap.lanes.map((lane) => lane.id === laneId ? { ...lane, name } : lane),
         }))}
+        onDeleteLane={deleteLane}
         onAddTask={addTask}
       />
-      <TaskInventory roadmap={roadmap} onTaskChange={updateTask} onExport={exportTaskTable} />
+      <TaskInventory roadmap={roadmap} onTaskChange={updateTask} onDeleteTask={deleteTask} onClearTasks={clearTasks} onExport={exportTaskTable} />
       <Analytics />
     </main>
   );
