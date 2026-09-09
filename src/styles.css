@@ -684,6 +684,21 @@ h1 {
   list-style: none;
 }
 
+.more-controls summary:hover {
+  background: rgba(var(--ink-rgb), 0.03);
+}
+
+.more-controls summary svg {
+  display: block;
+  color: var(--ink);
+  stroke-width: 2.4;
+  transition: transform 180ms ease;
+}
+
+.more-controls:not([open]) summary svg {
+  transform: rotate(180deg);
+}
+
 .more-controls summary::-webkit-details-marker {
   display: none;
 }

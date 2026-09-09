@@ -103,7 +103,7 @@ export function PlannerHeader({
 
           <button type="button" className="icon-button add-lane-button" onClick={onAddLane} title="Add swimlane" aria-label="Add swimlane"><Plus size={18} /><span>Add swimlane</span></button>
           <details className="more-controls" open={showMoreControls} onToggle={(event) => setShowMoreControls(event.currentTarget.open)}>
-            <summary title={showMoreControls ? 'Hide more controls' : 'Show more controls'} aria-label={showMoreControls ? 'Hide more controls' : 'Show more controls'}>{showMoreControls ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}</summary>
+            <summary title={showMoreControls ? 'Hide more controls' : 'Show more controls'} aria-label={showMoreControls ? 'Hide more controls' : 'Show more controls'}><ChevronRight size={20} /></summary>
             <div className="more-controls-content">
               {enabledSnapModes.length > 0 && (
                 <select className="snap-mode-select" value={activeSnapMode} onChange={(event) => onSnapModeChange(event.target.value as SnapMode)}>
