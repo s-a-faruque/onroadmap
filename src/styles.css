@@ -658,6 +658,14 @@ h1 {
   gap: 10px;
 }
 
+.file-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 10px;
+  border-left: 1px solid var(--line);
+}
+
 .year-field {
   display: flex;
   align-items: center;
@@ -740,6 +748,10 @@ select {
   font-weight: 400;
 }
 
+.snap-mode-select {
+  font-size: 0.85rem;
+}
+
 .icon-button {
   display: inline-grid;
   place-items: center;
@@ -747,6 +759,14 @@ select {
   height: 42px;
   border-color: var(--line);
   background: rgba(var(--paper-rgb), 0.82);
+}
+
+.file-actions .icon-button {
+  display: inline-flex;
+  width: auto;
+  gap: 6px;
+  padding: 0 10px;
+  font-size: 0.8rem;
 }
 
 .add-lane-button {
@@ -1025,7 +1045,7 @@ select {
   max-width: 132px;
   align-items: center;
   gap: 3px;
-  overflow: hidden;
+  overflow: visible;
   flex: 0 1 auto;
 }
 
@@ -1068,7 +1088,7 @@ select {
   box-shadow: 0 10px 24px rgba(var(--ink-rgb), 0.16);
   color: var(--ink);
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 400;
   white-space: normal;
 }
 

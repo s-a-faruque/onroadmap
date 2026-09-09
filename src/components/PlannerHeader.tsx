@@ -101,20 +101,22 @@ export function PlannerHeader({
           </div>
 
           {enabledSnapModes.length > 0 && (
-            <select value={activeSnapMode} onChange={(event) => onSnapModeChange(event.target.value as SnapMode)}>
+            <select className="snap-mode-select" value={activeSnapMode} onChange={(event) => onSnapModeChange(event.target.value as SnapMode)}>
               {enabledSnapModes.map((snapOption) => <option key={snapOption.value} value={snapOption.value}>{snapOption.label}</option>)}
             </select>
           )}
 
           <button type="button" className="icon-button add-lane-button" onClick={onAddLane} title="Add swimlane" aria-label="Add swimlane"><Plus size={18} /><span>Add swimlane</span></button>
-          {appConfig.controls.enableJsonExport && <button type="button" className="icon-button" onClick={onExport} title="Export JSON" aria-label="Export JSON"><Download size={18} /></button>}
-          {appConfig.controls.enablePdfDownload && <button type="button" className="icon-button" onClick={onExportPdf} title="Download PDF" aria-label="Download PDF"><FileDown size={18} /></button>}
-          {appConfig.controls.enableJsonImport && (
-            <>
-              <button type="button" className="icon-button" onClick={() => fileInputRef.current?.click()} title="Import JSON" aria-label="Import JSON"><Upload size={18} /></button>
-              <input ref={fileInputRef} className="hidden-input" type="file" accept="application/json" onChange={onImport} />
-            </>
-          )}
+          <div className="file-actions" aria-label="File actions">
+            {appConfig.controls.enableJsonImport && (
+              <>
+                <button type="button" className="icon-button" onClick={() => fileInputRef.current?.click()} title="Import JSON" aria-label="Import JSON"><Upload size={18} /><span>Import</span></button>
+                <input ref={fileInputRef} className="hidden-input" type="file" accept="application/json" onChange={onImport} />
+              </>
+            )}
+            {appConfig.controls.enableJsonExport && <button type="button" className="icon-button" onClick={onExport} title="Export JSON" aria-label="Export JSON"><Download size={18} /><span>Export</span></button>}
+            {appConfig.controls.enablePdfDownload && <button type="button" className="icon-button" onClick={onExportPdf} title="Download PDF" aria-label="Download PDF"><FileDown size={18} /><span>PDF</span></button>}
+          </div>
         </div>
       </section>
     </>
