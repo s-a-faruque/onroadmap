@@ -823,6 +823,16 @@ select {
   font-size: 0.8rem;
 }
 
+.file-actions .pdf-download-button {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.file-actions .pdf-download-button:hover {
+  background: var(--accent);
+  color: var(--paper);
+}
+
 .add-lane-button {
   display: inline-flex;
   width: auto;

@@ -118,7 +118,7 @@ export function PlannerHeader({
                   </>
                 )}
                 {appConfig.controls.enableJsonExport && <button type="button" className="icon-button" onClick={onExport} title="Export JSON" aria-label="Export JSON"><Download size={18} /><span>Export</span></button>}
-                {appConfig.controls.enablePdfDownload && <button type="button" className="icon-button" onClick={onExportPdf} title="Download PDF" aria-label="Download PDF"><FileDown size={18} /><span>PDF</span></button>}
+                {appConfig.controls.enablePdfDownload && <button type="button" className="icon-button pdf-download-button" onClick={onExportPdf} title="Download PDF" aria-label="Download PDF"><FileDown size={18} /><span>PDF</span></button>}
               </div>
             </div>
           </details>
