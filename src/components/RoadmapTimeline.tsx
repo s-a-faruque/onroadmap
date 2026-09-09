@@ -4,7 +4,7 @@ import { dateToDay } from '../dateMath';
 import type { RoadmapState, RoadmapTask, TimelineView } from '../types';
 
 const MIN_LANE_HEIGHT = 86;
-const LANE_LABEL_WIDTH = 168;
+const LANE_LABEL_WIDTH = 210;
 const TASK_HEIGHT = 42;
 const TASK_TOP = 18;
 const TASK_GAP = 10;
