@@ -706,9 +706,34 @@ h1 {
 .more-controls-content {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 8px;
   animation: reveal-more-controls 160ms ease-out;
+}
+
+.timeline-settings {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(var(--paper-rgb), 0.82);
+}
+
+.setting-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.setting-toggle input {
+  accent-color: var(--green);
 }
 
 @keyframes reveal-more-controls {

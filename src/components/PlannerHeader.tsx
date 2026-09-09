@@ -10,12 +10,18 @@ interface PlannerHeaderProps {
   activeSnapMode: SnapMode;
   fileInputRef: RefObject<HTMLInputElement | null>;
   getMonthInputValue: (month: { year: number; monthIndex: number }) => string;
+  showTaskLabels: boolean;
+  showColorPicker: boolean;
+  showDeleteButton: boolean;
   onTitleChange: (title: string) => void;
   onSubtitleChange: (subtitle: string) => void;
   onTimelineStartChange: (value: string) => void;
   onTimelineEndChange: (value: string) => void;
   onViewChange: (view: TimelineView) => void;
   onSnapModeChange: (snapMode: SnapMode) => void;
+  onToggleTaskLabels: () => void;
+  onToggleColorPicker: () => void;
+  onToggleDeleteButton: () => void;
   onAddLane: () => void;
   onExport: () => void;
   onExportPdf: () => void;
@@ -29,12 +35,18 @@ export function PlannerHeader({
   activeSnapMode,
   fileInputRef,
   getMonthInputValue,
+  showTaskLabels,
+  showColorPicker,
+  showDeleteButton,
   onTitleChange,
   onSubtitleChange,
   onTimelineStartChange,
   onTimelineEndChange,
   onViewChange,
   onSnapModeChange,
+  onToggleTaskLabels,
+  onToggleColorPicker,
+  onToggleDeleteButton,
   onAddLane,
   onExport,
   onExportPdf,
@@ -105,6 +117,20 @@ export function PlannerHeader({
           <details className="more-controls" open={showMoreControls} onToggle={(event) => setShowMoreControls(event.currentTarget.open)}>
             <summary title={showMoreControls ? 'Hide more controls' : 'Show more controls'} aria-label={showMoreControls ? 'Hide more controls' : 'Show more controls'}><ChevronRight size={20} /></summary>
             <div className="more-controls-content">
+              <div className="timeline-settings" aria-label="Timeline settings">
+                <label className="setting-toggle">
+                  <input type="checkbox" checked={showTaskLabels} onChange={onToggleTaskLabels} />
+                  <span>Labels</span>
+                </label>
+                <label className="setting-toggle">
+                  <input type="checkbox" checked={showColorPicker} onChange={onToggleColorPicker} />
+                  <span>Color picker</span>
+                </label>
+                <label className="setting-toggle">
+                  <input type="checkbox" checked={showDeleteButton} onChange={onToggleDeleteButton} />
+                  <span>Delete</span>
+                </label>
+              </div>
               {enabledSnapModes.length > 0 && (
                 <select className="snap-mode-select" value={activeSnapMode} onChange={(event) => onSnapModeChange(event.target.value as SnapMode)}>
                   {enabledSnapModes.map((snapOption) => <option key={snapOption.value} value={snapOption.value}>{snapOption.label}</option>)}
