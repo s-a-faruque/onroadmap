@@ -676,8 +676,8 @@ h1 {
   width: 42px;
   min-height: 42px;
   padding: 0 8px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
   background: rgba(var(--paper-rgb), 0.82);
   color: var(--ink);
   cursor: pointer;
