@@ -4,7 +4,9 @@ import { dateToDay } from '../dateMath';
 import type { RoadmapState, RoadmapTask, TimelineView } from '../types';
 
 const MIN_LANE_HEIGHT = 86;
-const LANE_LABEL_WIDTH = 210;
+const MIN_LANE_LABEL_WIDTH = 150;
+const MAX_LANE_LABEL_WIDTH = 360;
+const DEFAULT_LANE_LABEL_WIDTH = 210;
 const TASK_HEIGHT = 42;
 const TASK_TOP = 18;
 const TASK_GAP = 10;
@@ -72,13 +74,38 @@ export function RoadmapTimeline({
 }: RoadmapTimelineProps) {
   const laneTaskLayouts = useMemo(() => getLaneTaskLayouts(roadmap, timelineYear, timelineStartMonth, timelineMonthSpan), [roadmap, timelineYear, timelineStartMonth, timelineMonthSpan]);
   const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
+  const [laneLabelWidth, setLaneLabelWidth] = useState<number>(DEFAULT_LANE_LABEL_WIDTH);
+
+  const handleLaneLabelResize = (event: ReactPointerEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const startX = event.clientX;
+    const startWidth = laneLabelWidth;
+
+    const handlePointerMove = (moveEvent: PointerEvent) => {
+      const nextWidth = Math.min(Math.max(startWidth + (moveEvent.clientX - startX), MIN_LANE_LABEL_WIDTH), MAX_LANE_LABEL_WIDTH);
+      setLaneLabelWidth(nextWidth);
+    };
+
+    const handlePointerUp = () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+  };
 
   return (
     <section className="timeline-card" aria-label="Roadmap timeline">
       <div className="timeline-scroll">
-        <div ref={timelineRef} className="timeline" style={{ width: LANE_LABEL_WIDTH + timelineWidth }}>
+        <div ref={timelineRef} className="timeline" style={{ width: laneLabelWidth + timelineWidth }}>
           <div className={`timeline-header ${timelineView === 'week' ? 'weekly-header' : ''}`}>
-            <div className="lane-header">Swimlanes</div>
+            <div className="lane-header" style={{ width: laneLabelWidth, flexBasis: laneLabelWidth }}>
+              <span>Swimlanes</span>
+              <button type="button" className="lane-resizer" aria-label="Resize lane labels" onPointerDown={handleLaneLabelResize} />
+            </div>
             <div className="date-header" style={{ width: timelineWidth }}>
               <div className="quarter-row">{quarters.map((quarter) => <div key={quarter.label} className="quarter-cell" style={{ left: quarter.startDay * dayWidth, width: quarter.days * dayWidth }}>{quarter.label}</div>)}</div>
               <div className="month-row">{months.map((month) => <div key={month.label} className="month-cell" style={{ left: month.startDay * dayWidth, width: month.days * dayWidth }}>{month.label}</div>)}</div>
@@ -86,13 +113,13 @@ export function RoadmapTimeline({
             </div>
           </div>
           <div className="timeline-body">
-            <div className={`grid-lines ${timelineView === 'week' ? 'weekly-grid-lines' : ''}`} style={{ left: LANE_LABEL_WIDTH, width: timelineWidth }}>
+            <div className={`grid-lines ${timelineView === 'week' ? 'weekly-grid-lines' : ''}`} style={{ left: laneLabelWidth, width: timelineWidth }}>
               {timelineView === 'week' ? Array.from({ length: Math.ceil(dayCount / 7) + 1 }, (_, index) => <span key={index} style={{ left: index * 7 * dayWidth }} />) : months.map((month) => <span key={month.label} style={{ left: month.startDay * dayWidth }} />)}
             </div>
             {roadmap.lanes.map((lane) => {
               const laneLayout = laneTaskLayouts[lane.id];
               return <div className="lane-row" key={lane.id} style={{ height: laneLayout?.height ?? MIN_LANE_HEIGHT }}>
-                <div className="lane-label">
+                <div className="lane-label" style={{ width: laneLabelWidth, flexBasis: laneLabelWidth }}>
                   <input
                     value={lane.name}
                     title={lane.name}
