@@ -1,5 +1,5 @@
-import { ChangeEvent, RefObject } from 'react';
-import { Download, FileDown, Plus, Upload } from 'lucide-react';
+import { ChangeEvent, RefObject, useState } from 'react';
+import { ChevronLeft, ChevronRight, Download, FileDown, Plus, Upload } from 'lucide-react';
 import { appConfig } from '../appConfig';
 import type { RoadmapState, SnapMode, TimelineView } from '../types';
 
@@ -41,6 +41,7 @@ export function PlannerHeader({
   onImport,
 }: PlannerHeaderProps) {
   const enabledSnapModes = appConfig.controls.snapModes;
+  const [showMoreControls, setShowMoreControls] = useState(() => window.matchMedia('(min-width: 761px)').matches);
 
   return (
     <>
@@ -100,23 +101,27 @@ export function PlannerHeader({
             ))}
           </div>
 
-          {enabledSnapModes.length > 0 && (
-            <select className="snap-mode-select" value={activeSnapMode} onChange={(event) => onSnapModeChange(event.target.value as SnapMode)}>
-              {enabledSnapModes.map((snapOption) => <option key={snapOption.value} value={snapOption.value}>{snapOption.label}</option>)}
-            </select>
-          )}
-
           <button type="button" className="icon-button add-lane-button" onClick={onAddLane} title="Add swimlane" aria-label="Add swimlane"><Plus size={18} /><span>Add swimlane</span></button>
-          <div className="file-actions" aria-label="File actions">
-            {appConfig.controls.enableJsonImport && (
-              <>
-                <button type="button" className="icon-button" onClick={() => fileInputRef.current?.click()} title="Import JSON" aria-label="Import JSON"><Upload size={18} /><span>Import</span></button>
-                <input ref={fileInputRef} className="hidden-input" type="file" accept="application/json" onChange={onImport} />
-              </>
-            )}
-            {appConfig.controls.enableJsonExport && <button type="button" className="icon-button" onClick={onExport} title="Export JSON" aria-label="Export JSON"><Download size={18} /><span>Export</span></button>}
-            {appConfig.controls.enablePdfDownload && <button type="button" className="icon-button" onClick={onExportPdf} title="Download PDF" aria-label="Download PDF"><FileDown size={18} /><span>PDF</span></button>}
-          </div>
+          <details className="more-controls" open={showMoreControls} onToggle={(event) => setShowMoreControls(event.currentTarget.open)}>
+            <summary title={showMoreControls ? 'Hide more controls' : 'Show more controls'} aria-label={showMoreControls ? 'Hide more controls' : 'Show more controls'}>{showMoreControls ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}</summary>
+            <div className="more-controls-content">
+              {enabledSnapModes.length > 0 && (
+                <select className="snap-mode-select" value={activeSnapMode} onChange={(event) => onSnapModeChange(event.target.value as SnapMode)}>
+                  {enabledSnapModes.map((snapOption) => <option key={snapOption.value} value={snapOption.value}>{snapOption.label}</option>)}
+                </select>
+              )}
+              <div className="file-actions" aria-label="File actions">
+                {appConfig.controls.enableJsonImport && (
+                  <>
+                    <button type="button" className="icon-button" onClick={() => fileInputRef.current?.click()} title="Import JSON" aria-label="Import JSON"><Upload size={18} /><span>Import</span></button>
+                    <input ref={fileInputRef} className="hidden-input" type="file" accept="application/json" onChange={onImport} />
+                  </>
+                )}
+                {appConfig.controls.enableJsonExport && <button type="button" className="icon-button" onClick={onExport} title="Export JSON" aria-label="Export JSON"><Download size={18} /><span>Export</span></button>}
+                {appConfig.controls.enablePdfDownload && <button type="button" className="icon-button" onClick={onExportPdf} title="Download PDF" aria-label="Download PDF"><FileDown size={18} /><span>PDF</span></button>}
+              </div>
+            </div>
+          </details>
         </div>
       </section>
     </>

@@ -666,6 +666,60 @@ h1 {
   border-left: 1px solid var(--line);
 }
 
+.more-controls {
+  position: relative;
+}
+
+.more-controls summary {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  min-height: 42px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(var(--paper-rgb), 0.82);
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+}
+
+.more-controls summary::-webkit-details-marker {
+  display: none;
+}
+
+.more-controls-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  animation: reveal-more-controls 160ms ease-out;
+}
+
+@keyframes reveal-more-controls {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 761px) {
+  .more-controls[open] {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .more-controls[open] .more-controls-content {
+    margin-top: 0;
+  }
+}
+
 .year-field {
   display: flex;
   align-items: center;
@@ -786,7 +840,7 @@ select {
   border: 1px solid #9ca3af;
   border-radius: 8px;
   background: rgba(var(--paper-rgb), 0.88);
-  box-shadow: var(--shadow);
+  box-shadow: 0 8px 22px rgba(var(--ink-rgb), 0.08);
 }
 
 .timeline-scroll {
