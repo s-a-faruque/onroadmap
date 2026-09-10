@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ArrowRight, CalendarDays, FileDown, GripVertical, Palette, Save, SlidersHorizontal, X } from 'lucide-react';
+import { appConfig } from '../appConfig';
 
 interface LandingPageProps {
   onOpenPlanner: () => void;
@@ -43,10 +44,10 @@ export function LandingPage({ onOpenPlanner }: LandingPageProps) {
   return (
     <main className="landing-shell">
       <nav className="landing-nav" aria-label="Landing page navigation">
-        <div className="brand-lockup">
-          <img className="brand-logo" src="/route.png" alt="Onroadmap logo" />
-          <span>flash roadmap</span>
-        </div>
+        {appConfig.branding.enabled && <div className="brand-lockup">
+          <img className="brand-logo" src={appConfig.branding.logo} alt={`${appConfig.branding.name} logo`} />
+          <span>{appConfig.branding.name}</span>
+        </div>}
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
           <button 
             className="landing-nav-action" 
@@ -147,7 +148,7 @@ export function LandingPage({ onOpenPlanner }: LandingPageProps) {
       </section>
 
       <footer className="landing-footer">
-        <span>&copy; 2026 Flash Roadmap. All rights reserved.</span>
+        <span>{appConfig.branding.enabled ? `© 2026 ${appConfig.branding.name}. All rights reserved.` : '© 2026. All rights reserved.'}</span>
         <span className="landing-footer-links">
           <span>Plan clearly. Move deliberately.</span>
           <button className="landing-footer-link" type="button" onClick={() => setShowPrivacyPolicy(true)}>
@@ -178,7 +179,7 @@ export function LandingPage({ onOpenPlanner }: LandingPageProps) {
               <p className="privacy-updated">Last updated September 4, 2026</p>
               <h3>Roadmap data</h3>
               <p>
-                Flash Roadmap stores the roadmaps and timeline settings you create in your browser&apos;s local storage. This data is not sent to our servers, and we do not have access to it. Clearing your browser data will remove locally stored roadmaps, so use the JSON export when you need a backup.
+                {appConfig.branding.enabled ? appConfig.branding.name : 'This app'} stores the roadmaps and timeline settings you create in your browser&apos;s local storage. This data is not sent to our servers, and we do not have access to it. Clearing your browser data will remove locally stored roadmaps, so use the JSON export when you need a backup.
               </p>
               <h3>Analytics</h3>
               <p>

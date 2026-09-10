@@ -440,7 +440,7 @@ function App() {
       const logo = new Image();
       logo.onload = () => resolve(logo);
       logo.onerror = () => reject(new Error('Unable to load roadmap logo'));
-      logo.src = '/route.png';
+      logo.src = appConfig.branding.logo;
     });
   }
 
@@ -462,7 +462,7 @@ function App() {
           scale: 2,
           useCORS: true,
         }),
-        loadLogoImage(),
+        appConfig.branding.enabled ? loadLogoImage() : Promise.resolve(null),
       ]);
       const image = canvas.toDataURL('image/png');
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
@@ -477,8 +477,10 @@ function App() {
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(16);
       pdf.setTextColor(23, 33, 29);
-      pdf.addImage(logo, 'PNG', margin, margin - 4, logoSize, logoSize);
-      pdf.text('Roadmap task inventory', margin + logoSize + 10, margin + 16);
+      if (logo) {
+        pdf.addImage(logo, 'PNG', margin, margin - 4, logoSize, logoSize);
+      }
+      pdf.text(appConfig.branding.enabled ? `${appConfig.branding.name} task inventory` : 'Roadmap task inventory', margin + (logo ? logoSize + 10 : 0), margin + 16);
       pdf.addImage(image, 'PNG', margin, margin + titleHeight, imageWidth, imageHeight);
       pdf.save(`flash-roadmap-tasks-${timelineYear}.pdf`);
     } catch (error) {
@@ -508,7 +510,7 @@ function App() {
           windowWidth: timelineElement.scrollWidth,
           windowHeight: timelineElement.scrollHeight,
         }),
-        loadLogoImage(),
+        appConfig.branding.enabled ? loadLogoImage() : Promise.resolve(null),
       ]);
       const image = canvas.toDataURL('image/png');
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
@@ -526,12 +528,15 @@ function App() {
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(9);
       pdf.setTextColor(107, 114, 128);
-      pdf.text(roadmap.subtitle, margin + logoSize + 12, margin + 11);
+      const brandingOffset = logo ? logoSize + 12 : 0;
+      pdf.text(roadmap.subtitle, margin + brandingOffset, margin + 11);
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(18);
       pdf.setTextColor(23, 33, 29);
-      pdf.addImage(logo, 'PNG', margin, margin - 6, logoSize, logoSize);
-      pdf.text(roadmap.title, margin + logoSize + 12, margin + 32);
+      if (logo) {
+        pdf.addImage(logo, 'PNG', margin, margin - 6, logoSize, logoSize);
+      }
+      pdf.text(roadmap.title, margin + brandingOffset, margin + 32);
       pdf.addImage(image, 'PNG', margin, margin + titleHeight, imageWidth, imageHeight, undefined, 'FAST');
       const watermark = appConfig.controls.pdfWatermark;
       if (watermark.enabled) {

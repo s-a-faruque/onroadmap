@@ -25,6 +25,11 @@ export interface ThemeOption {
 }
 
 interface RoadmapAppConfig {
+  branding: {
+    enabled: boolean;
+    name: string;
+    logo: string;
+  };
   timeline: {
     startYear: number;
     endYear?: number;
@@ -55,6 +60,11 @@ interface RoadmapAppConfig {
 }
 
 export const appConfig: RoadmapAppConfig = {
+  branding: {
+    enabled: true,
+    name: 'flash roadmap',
+    logo: '/route.png',
+  },
   timeline: {
     startYear: 2026,
     endYear: 2026,

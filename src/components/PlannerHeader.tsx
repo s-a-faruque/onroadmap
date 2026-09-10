@@ -54,10 +54,10 @@ export function PlannerHeader({
   return (
     <>
       <nav className="planner-nav" aria-label="Planner navigation">
-        <div className="brand-lockup">
-          <img className="brand-logo" src="/route.png" alt="Onroadmap logo" />
-          <span>flash roadmap</span>
-        </div>
+        {appConfig.branding.enabled && <div className="brand-lockup">
+          <img className="brand-logo" src={appConfig.branding.logo} alt={`${appConfig.branding.name} logo`} />
+          <span>{appConfig.branding.name}</span>
+        </div>}
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <button 
             className="planner-nav-action" 
