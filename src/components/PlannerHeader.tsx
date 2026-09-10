@@ -1,5 +1,5 @@
 import { ChangeEvent, RefObject, useState } from 'react';
-import { ChevronLeft, ChevronRight, Download, FileDown, Plus, Undo2, Upload } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, FileDown, Plus, Printer, Undo2, Upload } from 'lucide-react';
 import { appConfig } from '../appConfig';
 import type { RoadmapState, SnapMode, TimelineView } from '../types';
 
@@ -10,18 +10,14 @@ interface PlannerHeaderProps {
   activeSnapMode: SnapMode;
   fileInputRef: RefObject<HTMLInputElement | null>;
   getMonthInputValue: (month: { year: number; monthIndex: number }) => string;
-  showTaskLabels: boolean;
-  showColorPicker: boolean;
-  showDeleteButton: boolean;
+  printFriendly: boolean;
   onTitleChange: (title: string) => void;
   onSubtitleChange: (subtitle: string) => void;
   onTimelineStartChange: (value: string) => void;
   onTimelineEndChange: (value: string) => void;
   onViewChange: (view: TimelineView) => void;
   onSnapModeChange: (snapMode: SnapMode) => void;
-  onToggleTaskLabels: () => void;
-  onToggleColorPicker: () => void;
-  onToggleDeleteButton: () => void;
+  onTogglePrintFriendly: () => void;
   onUndo: () => void;
   canUndo: boolean;
   onAddLane: () => void;
@@ -37,18 +33,14 @@ export function PlannerHeader({
   activeSnapMode,
   fileInputRef,
   getMonthInputValue,
-  showTaskLabels,
-  showColorPicker,
-  showDeleteButton,
+  printFriendly,
   onTitleChange,
   onSubtitleChange,
   onTimelineStartChange,
   onTimelineEndChange,
   onViewChange,
   onSnapModeChange,
-  onToggleTaskLabels,
-  onToggleColorPicker,
-  onToggleDeleteButton,
+  onTogglePrintFriendly,
   onUndo,
   canUndo,
   onAddLane,
@@ -118,22 +110,14 @@ export function PlannerHeader({
           </div>
 
           <button type="button" className="icon-button" onClick={onUndo} disabled={!canUndo} title="Undo" aria-label="Undo"><Undo2 size={18} /></button>
-          <button type="button" className="icon-button add-lane-button" onClick={onAddLane} title="Add swimlane" aria-label="Add swimlane"><Plus size={18} /><span>Add swimlane</span></button>
+          {!printFriendly && <button type="button" className="icon-button add-lane-button" onClick={onAddLane} title="Add swimlane" aria-label="Add swimlane"><Plus size={18} /><span>Add swimlane</span></button>}
           <details className="more-controls" open={showMoreControls} onToggle={(event) => setShowMoreControls(event.currentTarget.open)}>
             <summary title={showMoreControls ? 'Hide more controls' : 'Show more controls'} aria-label={showMoreControls ? 'Hide more controls' : 'Show more controls'}><ChevronRight size={20} /></summary>
             <div className="more-controls-content">
               <div className="timeline-settings" aria-label="Timeline settings">
                 <label className="setting-toggle">
-                  <input type="checkbox" checked={showTaskLabels} onChange={onToggleTaskLabels} />
-                  <span>Labels</span>
-                </label>
-                <label className="setting-toggle">
-                  <input type="checkbox" checked={showColorPicker} onChange={onToggleColorPicker} />
-                  <span>Color picker</span>
-                </label>
-                <label className="setting-toggle">
-                  <input type="checkbox" checked={showDeleteButton} onChange={onToggleDeleteButton} />
-                  <span>Delete</span>
+                  <input type="checkbox" checked={printFriendly} onChange={onTogglePrintFriendly} />
+                  <span><Printer size={15} /> Print friendly</span>
                 </label>
               </div>
               {enabledSnapModes.length > 0 && (

@@ -197,9 +197,7 @@ function App() {
   const undoStackRef = useRef<RoadmapState[]>([]);
   const [timelineView, setTimelineView] = useState<TimelineView>('month');
   const [snapMode, setSnapMode] = useState<SnapMode>(appConfig.controls.defaultSnapMode);
-  const [showTaskLabels, setShowTaskLabels] = useState(true);
-  const [showColorPicker, setShowColorPicker] = useState(true);
-  const [showDeleteButton, setShowDeleteButton] = useState(true);
+  const [printFriendly, setPrintFriendly] = useState(false);
   const [dragSession, setDragSession] = useState<DragSession | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -639,18 +637,14 @@ function App() {
         activeSnapMode={activeSnapMode}
         fileInputRef={fileInputRef}
         getMonthInputValue={getMonthInputValue}
-        showTaskLabels={showTaskLabels}
-        showColorPicker={showColorPicker}
-        showDeleteButton={showDeleteButton}
+        printFriendly={printFriendly}
         onTitleChange={(title) => updateRoadmap((currentRoadmap) => ({ ...currentRoadmap, title }))}
         onSubtitleChange={(subtitle) => updateRoadmap((currentRoadmap) => ({ ...currentRoadmap, subtitle }))}
         onTimelineStartChange={updateTimelineStart}
         onTimelineEndChange={updateTimelineEnd}
         onViewChange={setTimelineView}
         onSnapModeChange={setSnapMode}
-        onToggleTaskLabels={() => setShowTaskLabels((current) => !current)}
-        onToggleColorPicker={() => setShowColorPicker((current) => !current)}
-        onToggleDeleteButton={() => setShowDeleteButton((current) => !current)}
+        onTogglePrintFriendly={() => setPrintFriendly((current) => !current)}
         onUndo={undoRoadmap}
         canUndo={undoStackRef.current.length > 0}
         onAddLane={addLane}
@@ -672,9 +666,7 @@ function App() {
         quarters={quarters}
         weeks={weeks}
         draggingTaskId={dragSession?.taskId}
-        showTaskLabels={showTaskLabels}
-        showColorPicker={showColorPicker}
-        showDeleteButton={showDeleteButton}
+        printFriendly={printFriendly}
         onStartDrag={startDrag}
         onTaskChange={updateTask}
         onDeleteTask={deleteTask}
