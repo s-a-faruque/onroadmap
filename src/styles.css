@@ -581,6 +581,10 @@ button {
   margin-bottom: 18px;
 }
 
+.topbar > div:first-child {
+  min-width: 0;
+}
+
 .eyebrow {
   margin: 0 0 8px;
   color: #6b7280;
@@ -591,15 +595,20 @@ button {
 }
 
 .roadmap-subtitle {
-  width: min(44ch, 100%);
+  width: min(32ch, 42vw);
+  max-width: 100%;
   padding: 0 4px;
   border: 0;
   outline: 0;
   background: transparent;
   color: inherit;
   font: inherit;
+  font-size: 0.72rem;
   letter-spacing: inherit;
   text-transform: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   cursor: text;
   border-bottom: 1px solid transparent;
   transition: border-color 150ms ease, background-color 150ms ease;
@@ -619,13 +628,14 @@ button {
 
 h1 {
   margin: 0;
-  font-size: clamp(1.2rem, 2.5vw, 2.75rem);
+  font-size: clamp(1rem, 2.1vw, 1.25rem);
   line-height: 0.92;
   letter-spacing: 0;
 }
 
 .roadmap-title {
-  width: 6.5em;
+  width: min(36ch, 42vw);
+  max-width: 100%;
   padding: 0 4px;
   border: 0;
   outline: 0;
@@ -633,6 +643,9 @@ h1 {
   color: inherit;
   font: inherit;
   font-weight: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   cursor: text;
   border-bottom: 2px solid transparent;
   transition: border-color 150ms ease, background-color 150ms ease;
