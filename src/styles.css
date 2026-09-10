@@ -1151,7 +1151,7 @@ select {
   min-width: 42px;
   overflow: visible;
   border: 1px solid;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   background: var(--paper);
   box-shadow: none;
   touch-action: none;
