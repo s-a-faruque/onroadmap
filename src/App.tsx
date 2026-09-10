@@ -20,6 +20,7 @@ import { TaskInventory } from './components/TaskInventory';
 import { Analytics } from '@vercel/analytics/react';
 
 const TIMELINE_RANGE_STORAGE_KEY = 'onroadmap.timelineRange.v1';
+const MAX_UNDO_STEPS = 50;
 
 const CURRENT_YEAR = new Date().getFullYear();
 const COLORS = ['#f25f5c', '#247ba0', '#70c1b3', '#f3b562', '#7f5af0', '#2cb67d'];
@@ -192,6 +193,8 @@ function App() {
 
     return storedRoadmap ? normalizeRoadmap(storedRoadmap) : createInitialState(configuredStartYear, timelineStartMonth, timelineMonthSpan);
   });
+  const roadmapRef = useRef(roadmap);
+  const undoStackRef = useRef<RoadmapState[]>([]);
   const [timelineView, setTimelineView] = useState<TimelineView>('month');
   const [snapMode, setSnapMode] = useState<SnapMode>(appConfig.controls.defaultSnapMode);
   const [showTaskLabels, setShowTaskLabels] = useState(true);
@@ -229,6 +232,18 @@ function App() {
   }, [roadmap]);
 
   useEffect(() => {
+    function handleUndoShortcut(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z' && !event.shiftKey) {
+        event.preventDefault();
+        undoRoadmap();
+      }
+    }
+
+    window.addEventListener('keydown', handleUndoShortcut);
+    return () => window.removeEventListener('keydown', handleUndoShortcut);
+  }, []);
+
+  useEffect(() => {
     window.localStorage.setItem(TIMELINE_RANGE_STORAGE_KEY, JSON.stringify(timelineRangeSelection));
   }, [timelineRangeSelection]);
 
@@ -259,7 +274,7 @@ function App() {
     const activeDragSession = dragSession;
 
     function handlePointerMove(event: PointerEvent) {
-      setRoadmap((currentRoadmap) => {
+      updateRoadmap((currentRoadmap) => {
         const horizontalDelta = Math.round((event.clientX - activeDragSession.startClientX) / dayWidth);
         const verticalDelta = Math.round((event.clientY - activeDragSession.startClientY) / 86);
         const nextLaneIndex = Math.min(
@@ -310,7 +325,7 @@ function App() {
             };
           }),
         };
-      });
+      }, false);
     }
 
     function handlePointerUp(event: PointerEvent) {
@@ -334,6 +349,7 @@ function App() {
 
   function startDrag(event: ReactPointerEvent, task: RoadmapTask, mode: DragMode) {
     event.currentTarget.setPointerCapture(event.pointerId);
+    recordUndoStep();
     const laneIndex = roadmap.lanes.findIndex((lane) => lane.id === task.laneId);
 
     setDragSession({
@@ -349,7 +365,7 @@ function App() {
   }
 
   function updateTask(taskId: string, updates: Partial<RoadmapTask>) {
-    setRoadmap((currentRoadmap) => ({
+    updateRoadmap((currentRoadmap) => ({
       ...currentRoadmap,
       tasks: currentRoadmap.tasks.map((task) => (task.id === taskId ? { ...task, ...updates } : task)),
     }));
@@ -362,7 +378,7 @@ function App() {
       return;
     }
 
-    setRoadmap((currentRoadmap) => ({
+    updateRoadmap((currentRoadmap) => ({
       ...currentRoadmap,
       tasks: currentRoadmap.tasks.filter((currentTask) => currentTask.id !== taskId),
     }));
@@ -373,14 +389,14 @@ function App() {
       return;
     }
 
-    setRoadmap((currentRoadmap) => ({ ...currentRoadmap, tasks: [] }));
+    updateRoadmap((currentRoadmap) => ({ ...currentRoadmap, tasks: [] }));
   }
 
   function addLane() {
     const laneName = `Lane ${roadmap.lanes.length + 1}`;
     const lane = { id: crypto.randomUUID(), name: laneName };
 
-    setRoadmap((currentRoadmap) => ({
+    updateRoadmap((currentRoadmap) => ({
       ...currentRoadmap,
       lanes: [...currentRoadmap.lanes, lane],
       tasks: [...currentRoadmap.tasks, createTask(timelineYear, timelineStartMonth, timelineMonthSpan, lane.id, currentRoadmap.tasks.length)],
@@ -395,7 +411,7 @@ function App() {
       return;
     }
 
-    setRoadmap((currentRoadmap) => ({
+    updateRoadmap((currentRoadmap) => ({
       ...currentRoadmap,
       lanes: currentRoadmap.lanes.filter((currentLane) => currentLane.id !== laneId),
       tasks: currentRoadmap.tasks.filter((task) => task.laneId !== laneId),
@@ -403,7 +419,7 @@ function App() {
   }
 
   function addTask(laneId: string) {
-    setRoadmap((currentRoadmap) => ({
+    updateRoadmap((currentRoadmap) => ({
       ...currentRoadmap,
       tasks: [...currentRoadmap.tasks, createTask(timelineYear, timelineStartMonth, timelineMonthSpan, laneId, currentRoadmap.tasks.length)],
     }));
@@ -565,7 +581,7 @@ function App() {
         throw new Error('Invalid roadmap payload');
       }
 
-      setRoadmap(normalizeRoadmap(nextRoadmap));
+      updateRoadmap(() => normalizeRoadmap(nextRoadmap));
       event.target.value = '';
     });
   }
@@ -590,6 +606,30 @@ function App() {
     });
   }
 
+  function recordUndoStep() {
+    undoStackRef.current = [...undoStackRef.current.slice(-(MAX_UNDO_STEPS - 1)), roadmapRef.current];
+  }
+
+  function updateRoadmap(updater: (currentRoadmap: RoadmapState) => RoadmapState, recordHistory = true) {
+    if (recordHistory) {
+      recordUndoStep();
+    }
+    const nextRoadmap = updater(roadmapRef.current);
+    roadmapRef.current = nextRoadmap;
+    setRoadmap(nextRoadmap);
+  }
+
+  function undoRoadmap() {
+    const previousRoadmap = undoStackRef.current.pop();
+
+    if (!previousRoadmap) {
+      return;
+    }
+
+    roadmapRef.current = previousRoadmap;
+    setRoadmap(previousRoadmap);
+  }
+
   return (
     <main className="app-shell">
       <PlannerHeader
@@ -602,8 +642,8 @@ function App() {
         showTaskLabels={showTaskLabels}
         showColorPicker={showColorPicker}
         showDeleteButton={showDeleteButton}
-        onTitleChange={(title) => setRoadmap((currentRoadmap) => ({ ...currentRoadmap, title }))}
-        onSubtitleChange={(subtitle) => setRoadmap((currentRoadmap) => ({ ...currentRoadmap, subtitle }))}
+        onTitleChange={(title) => updateRoadmap((currentRoadmap) => ({ ...currentRoadmap, title }))}
+        onSubtitleChange={(subtitle) => updateRoadmap((currentRoadmap) => ({ ...currentRoadmap, subtitle }))}
         onTimelineStartChange={updateTimelineStart}
         onTimelineEndChange={updateTimelineEnd}
         onViewChange={setTimelineView}
@@ -611,6 +651,8 @@ function App() {
         onToggleTaskLabels={() => setShowTaskLabels((current) => !current)}
         onToggleColorPicker={() => setShowColorPicker((current) => !current)}
         onToggleDeleteButton={() => setShowDeleteButton((current) => !current)}
+        onUndo={undoRoadmap}
+        canUndo={undoStackRef.current.length > 0}
         onAddLane={addLane}
         onExport={exportRoadmap}
         onExportPdf={exportRoadmapPdf}
@@ -636,7 +678,7 @@ function App() {
         onStartDrag={startDrag}
         onTaskChange={updateTask}
         onDeleteTask={deleteTask}
-        onLaneChange={(laneId, name) => setRoadmap((currentRoadmap) => ({
+        onLaneChange={(laneId, name) => updateRoadmap((currentRoadmap) => ({
           ...currentRoadmap,
           lanes: currentRoadmap.lanes.map((lane) => lane.id === laneId ? { ...lane, name } : lane),
         }))}

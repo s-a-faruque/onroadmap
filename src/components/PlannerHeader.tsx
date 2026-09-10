@@ -1,5 +1,5 @@
 import { ChangeEvent, RefObject, useState } from 'react';
-import { ChevronLeft, ChevronRight, Download, FileDown, Plus, Upload } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, FileDown, Plus, Undo2, Upload } from 'lucide-react';
 import { appConfig } from '../appConfig';
 import type { RoadmapState, SnapMode, TimelineView } from '../types';
 
@@ -22,6 +22,8 @@ interface PlannerHeaderProps {
   onToggleTaskLabels: () => void;
   onToggleColorPicker: () => void;
   onToggleDeleteButton: () => void;
+  onUndo: () => void;
+  canUndo: boolean;
   onAddLane: () => void;
   onExport: () => void;
   onExportPdf: () => void;
@@ -47,6 +49,8 @@ export function PlannerHeader({
   onToggleTaskLabels,
   onToggleColorPicker,
   onToggleDeleteButton,
+  onUndo,
+  canUndo,
   onAddLane,
   onExport,
   onExportPdf,
@@ -113,6 +117,7 @@ export function PlannerHeader({
             ))}
           </div>
 
+          <button type="button" className="icon-button" onClick={onUndo} disabled={!canUndo} title="Undo" aria-label="Undo"><Undo2 size={18} /></button>
           <button type="button" className="icon-button add-lane-button" onClick={onAddLane} title="Add swimlane" aria-label="Add swimlane"><Plus size={18} /><span>Add swimlane</span></button>
           <details className="more-controls" open={showMoreControls} onToggle={(event) => setShowMoreControls(event.currentTarget.open)}>
             <summary title={showMoreControls ? 'Hide more controls' : 'Show more controls'} aria-label={showMoreControls ? 'Hide more controls' : 'Show more controls'}><ChevronRight size={20} /></summary>
