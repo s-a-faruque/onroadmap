@@ -1147,7 +1147,7 @@ select {
   display: flex;
   align-items: center;
   gap: 7px;
-  height: 42px;
+  height: 32px;
   min-width: 42px;
   overflow: visible;
   border: 1px solid;
