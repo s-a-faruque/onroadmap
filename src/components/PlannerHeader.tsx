@@ -102,7 +102,7 @@ export function PlannerHeader({
           </div>
 
           <div className="segmented" aria-label="Timeline view">
-            {(['month', 'week'] as TimelineView[]).map((view) => (
+            {(['month', 'week', 'day'] as TimelineView[]).map((view) => (
               <button key={view} className={timelineView === view ? 'active' : ''} type="button" onClick={() => onViewChange(view)}>
                 {view}
               </button>

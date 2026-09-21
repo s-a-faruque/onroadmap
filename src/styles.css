@@ -930,6 +930,10 @@ select {
   height: 100px;
 }
 
+.timeline-header.daily-header {
+  height: 118px;
+}
+
 .lane-header,
 .lane-label {
   position: sticky;
@@ -1017,6 +1021,14 @@ select {
   left: 0;
 }
 
+.day-row {
+  position: absolute;
+  top: 54px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
 .quarter-cell,
 .month-cell {
   position: absolute;
@@ -1055,6 +1067,20 @@ select {
   white-space: nowrap;
 }
 
+.day-cell {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-right: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .timeline-body {
   position: relative;
 }
@@ -1076,6 +1102,10 @@ select {
 
 .weekly-grid-lines span {
   background: rgba(var(--ink-rgb), 0.2);
+}
+
+.daily-grid-lines span {
+  background: rgba(var(--ink-rgb), 0.12);
 }
 
 .lane-row {

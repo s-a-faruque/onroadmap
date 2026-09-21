@@ -9,6 +9,7 @@ import {
   quarterSegments,
   snapDay,
   weekSegments,
+  daySegments,
 } from './dateMath';
 import { appConfig } from './appConfig';
 import { localRoadmapStore } from './storage';
@@ -210,11 +211,12 @@ function App() {
   const timelineYear = configuredStartYear;
   const timelineRange = formatTimelineRange(timelineYear, timelineStartMonth, timelineMonthSpan);
   const dayCount = getYearDayCount(timelineYear, timelineStartMonth, timelineMonthSpan);
-  const dayWidth = timelineView === 'week' ? 18 : 4.8;
+  const dayWidth = timelineView === 'week' ? 18 : timelineView === 'day' ? 12 : 4.8;
   const timelineWidth = dayCount * dayWidth;
   const months = useMemo(() => monthSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
   const quarters = useMemo(() => quarterSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
   const weeks = useMemo(() => weekSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
+  const days = useMemo(() => daySegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
   useEffect(() => {
     function handleHashChange() {
       setShowLanding(window.location.hash !== '#planner');
@@ -670,6 +672,7 @@ function App() {
         months={months}
         quarters={quarters}
         weeks={weeks}
+        days={days}
         draggingTaskId={dragSession?.taskId}
         printFriendly={printFriendly}
         onStartDrag={startDrag}

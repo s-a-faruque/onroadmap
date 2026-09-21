@@ -39,6 +39,7 @@ interface RoadmapTimelineProps {
   months: Array<{ label: string; startDay: number; days: number }>;
   quarters: Array<{ label: string; startDay: number; days: number }>;
   weeks: Array<{ label: string; startDay: number; days: number }>;
+  days: Array<{ label: string; startDay: number; days: number }>;
   draggingTaskId: string | undefined;
   printFriendly: boolean;
   onStartDrag: (event: ReactPointerEvent, task: RoadmapTask, mode: DragMode) => void;
@@ -70,7 +71,7 @@ function getLaneTaskLayouts(roadmap: RoadmapState, timelineYear: number, startMo
 
 export function RoadmapTimeline({
   roadmap, timelineRef, timelineView, timelineYear, timelineStartMonth, timelineMonthSpan,
-  dayCount, dayWidth, timelineWidth, months, quarters, weeks, draggingTaskId,
+  dayCount, dayWidth, timelineWidth, months, quarters, weeks, days, draggingTaskId,
   printFriendly, onStartDrag, onTaskChange, onDeleteTask, onLaneChange, onDeleteLane, onAddTask,
 }: RoadmapTimelineProps) {
   const laneTaskLayouts = useMemo(() => getLaneTaskLayouts(roadmap, timelineYear, timelineStartMonth, timelineMonthSpan), [roadmap, timelineYear, timelineStartMonth, timelineMonthSpan]);
@@ -102,7 +103,7 @@ export function RoadmapTimeline({
     <section className="timeline-card" aria-label="Roadmap timeline">
       <div className="timeline-scroll">
         <div ref={timelineRef} className="timeline" style={{ width: laneLabelWidth + timelineWidth }}>
-          <div className={`timeline-header ${timelineView === 'week' ? 'weekly-header' : ''}`}>
+          <div className={`timeline-header ${timelineView === 'week' ? 'weekly-header' : ''} ${timelineView === 'day' ? 'daily-header' : ''}`}>
             <div className="lane-header" style={{ width: laneLabelWidth, flexBasis: laneLabelWidth }}>
               <span>Swimlanes</span>
               {!printFriendly && <button type="button" className="lane-resizer" aria-label="Resize lane labels" onPointerDown={handleLaneLabelResize} />}
@@ -111,11 +112,16 @@ export function RoadmapTimeline({
               <div className="quarter-row">{quarters.map((quarter) => <div key={quarter.label} className="quarter-cell" style={{ left: quarter.startDay * dayWidth, width: quarter.days * dayWidth }}>{quarter.label}</div>)}</div>
               <div className="month-row">{months.map((month) => <div key={month.label} className="month-cell" style={{ left: month.startDay * dayWidth, width: month.days * dayWidth }}>{month.label}</div>)}</div>
               {timelineView === 'week' && <div className="week-row" aria-label="Weekly dates">{weeks.map((week) => <div key={week.startDay} className="week-cell" style={{ left: week.startDay * dayWidth, width: week.days * dayWidth }}>{week.label}</div>)}</div>}
+              {timelineView === 'day' && <div className="day-row" aria-label="Daily dates">{days.map((day) => <div key={`${day.startDay}-${day.label}`} className="day-cell" style={{ left: day.startDay * dayWidth, width: day.days * dayWidth }}>{day.label}</div>)}</div>}
             </div>
           </div>
           <div className="timeline-body">
-            <div className={`grid-lines ${timelineView === 'week' ? 'weekly-grid-lines' : ''}`} style={{ left: laneLabelWidth, width: timelineWidth }}>
-              {timelineView === 'week' ? Array.from({ length: Math.ceil(dayCount / 7) + 1 }, (_, index) => <span key={index} style={{ left: index * 7 * dayWidth }} />) : months.map((month) => <span key={month.label} style={{ left: month.startDay * dayWidth }} />)}
+            <div className={`grid-lines ${timelineView === 'week' ? 'weekly-grid-lines' : ''} ${timelineView === 'day' ? 'daily-grid-lines' : ''}`} style={{ left: laneLabelWidth, width: timelineWidth }}>
+              {timelineView === 'day'
+                ? Array.from({ length: dayCount + 1 }, (_, index) => <span key={index} style={{ left: index * dayWidth }} />)
+                : timelineView === 'week'
+                  ? Array.from({ length: Math.ceil(dayCount / 7) + 1 }, (_, index) => <span key={index} style={{ left: index * 7 * dayWidth }} />)
+                  : months.map((month) => <span key={month.label} style={{ left: month.startDay * dayWidth }} />)}
             </div>
             {roadmap.lanes.map((lane) => {
               const laneLayout = laneTaskLayouts[lane.id];

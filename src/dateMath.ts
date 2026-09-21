@@ -121,3 +121,18 @@ export function weekSegments(year: number, startMonth = 0, monthSpan = 12) {
     };
   });
 }
+
+export function daySegments(year: number, startMonth = 0, monthSpan = 12) {
+  const timelineStart = getTimelineStart(year, startMonth);
+  const dayCount = getYearDayCount(year, startMonth, monthSpan);
+
+  return Array.from({ length: dayCount }, (_, dayIndex) => {
+    const start = addDays(timelineStart, dayIndex);
+
+    return {
+      label: start.toLocaleString('en', { month: 'short', day: 'numeric', timeZone: 'UTC' }),
+      startDay: dayIndex,
+      days: 1,
+    };
+  });
+}
