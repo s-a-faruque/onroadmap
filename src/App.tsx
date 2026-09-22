@@ -19,6 +19,7 @@ import { DragMode, RoadmapTimeline } from './components/RoadmapTimeline';
 import { LandingPage } from './components/LandingPage';
 import { TaskInventory } from './components/TaskInventory';
 import { Analytics } from '@vercel/analytics/react';
+import { ROADMAP_TEMPLATES, buildRoadmapFromTemplate } from './templates';
 
 const TIMELINE_RANGE_STORAGE_KEY = 'onroadmap.timelineRange.v1';
 const MAX_UNDO_STEPS = 50;
@@ -186,6 +187,7 @@ function isValidTimelineRange(range: TimelineRange) {
 function App() {
   const [showLanding, setShowLanding] = useState(() => window.location.hash !== '#planner');
   const [timelineRangeSelection, setTimelineRangeSelection] = useState(getInitialTimelineRange);
+  const [selectedTemplateId, setSelectedTemplateId] = useState(ROADMAP_TEMPLATES[0].id);
   const timelineStartMonth = timelineRangeSelection.start.monthIndex;
   const configuredStartYear = timelineRangeSelection.start.year;
   const timelineMonthSpan = getMonthSpanFromRange(timelineRangeSelection);
@@ -611,6 +613,23 @@ function App() {
     });
   }
 
+  function applyTemplate(templateId: string, startValue: string) {
+    const template = ROADMAP_TEMPLATES.find((candidate) => candidate.id === templateId) ?? ROADMAP_TEMPLATES[0];
+    const nextStart = parseMonthInputValue(startValue);
+    const nextEnd = {
+      year: nextStart.year,
+      monthIndex: ((nextStart.monthIndex + template.monthSpan - 1) % 12 + 12) % 12,
+    };
+    const nextEndYear = nextStart.year + Math.floor((nextStart.monthIndex + template.monthSpan - 1) / 12);
+
+    setTimelineRangeSelection({
+      start: nextStart,
+      end: { year: nextEndYear, monthIndex: nextEnd.monthIndex },
+    });
+    setSelectedTemplateId(template.id);
+    updateRoadmap(() => buildRoadmapFromTemplate(template, nextStart.year, nextStart.monthIndex), true);
+  }
+
   function recordUndoStep() {
     undoStackRef.current = [...undoStackRef.current.slice(-(MAX_UNDO_STEPS - 1)), roadmapRef.current];
   }
@@ -644,6 +663,10 @@ function App() {
         activeSnapMode={activeSnapMode}
         fileInputRef={fileInputRef}
         getMonthInputValue={getMonthInputValue}
+        templateOptions={ROADMAP_TEMPLATES}
+        selectedTemplateId={selectedTemplateId}
+        onTemplateChange={setSelectedTemplateId}
+        onApplyTemplate={applyTemplate}
         printFriendly={printFriendly}
         onTitleChange={(title) => updateRoadmap((currentRoadmap) => ({ ...currentRoadmap, title }))}
         onSubtitleChange={(subtitle) => updateRoadmap((currentRoadmap) => ({ ...currentRoadmap, subtitle }))}

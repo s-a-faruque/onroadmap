@@ -1,6 +1,7 @@
-import { ChangeEvent, RefObject, useState } from 'react';
-import { ChevronLeft, ChevronRight, Download, FileDown, Plus, Printer, Undo2, Upload } from 'lucide-react';
+import { ChangeEvent, RefObject, useEffect, useState } from 'react';
+import { ChevronLeft, ChevronRight, Download, FileDown, LayoutTemplate, Plus, Printer, Undo2, Upload, X } from 'lucide-react';
 import { appConfig } from '../appConfig';
+import type { RoadmapTemplate } from '../templates';
 import type { RoadmapState, SnapMode, TimelineView } from '../types';
 
 interface PlannerHeaderProps {
@@ -10,6 +11,10 @@ interface PlannerHeaderProps {
   activeSnapMode: SnapMode;
   fileInputRef: RefObject<HTMLInputElement | null>;
   getMonthInputValue: (month: { year: number; monthIndex: number }) => string;
+  templateOptions: RoadmapTemplate[];
+  selectedTemplateId: string;
+  onTemplateChange: (templateId: string) => void;
+  onApplyTemplate: (templateId: string, startValue: string) => void;
   printFriendly: boolean;
   onTitleChange: (title: string) => void;
   onSubtitleChange: (subtitle: string) => void;
@@ -33,6 +38,10 @@ export function PlannerHeader({
   activeSnapMode,
   fileInputRef,
   getMonthInputValue,
+  templateOptions,
+  selectedTemplateId,
+  onTemplateChange,
+  onApplyTemplate,
   printFriendly,
   onTitleChange,
   onSubtitleChange,
@@ -50,6 +59,24 @@ export function PlannerHeader({
 }: PlannerHeaderProps) {
   const enabledSnapModes = appConfig.controls.snapModes;
   const [showMoreControls, setShowMoreControls] = useState(() => window.matchMedia('(min-width: 761px)').matches);
+  const [showTemplateDrawer, setShowTemplateDrawer] = useState(false);
+
+  useEffect(() => {
+    if (!showTemplateDrawer) {
+      return;
+    }
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setShowTemplateDrawer(false);
+      }
+    }
+
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [showTemplateDrawer]);
+
+  const selectedTemplate = templateOptions.find((template) => template.id === selectedTemplateId) ?? templateOptions[0];
 
   return (
     <>
@@ -90,6 +117,12 @@ export function PlannerHeader({
         </div>
 
         <div className="controls">
+          <button type="button" className="template-drawer-trigger" onClick={() => setShowTemplateDrawer(true)} aria-haspopup="dialog" aria-expanded={showTemplateDrawer}>
+            <LayoutTemplate size={17} />
+            <span>Templates</span>
+            <strong>{selectedTemplate.name}</strong>
+          </button>
+
           <div className="timeline-range-picker" aria-label="Timeline range">
             <label className="year-field">
               <span>From</span>
@@ -139,6 +172,64 @@ export function PlannerHeader({
           </details>
         </div>
       </section>
+      {showTemplateDrawer && (
+        <div className="template-drawer-layer">
+          <button type="button" className="template-drawer-backdrop" onClick={() => setShowTemplateDrawer(false)} aria-label="Close templates" />
+          <aside className="template-drawer" role="dialog" aria-modal="true" aria-labelledby="template-drawer-title">
+            <div className="template-drawer-header">
+              <div>
+                <p className="eyebrow">Roadmap starter kits</p>
+                <h2 id="template-drawer-title">Templates</h2>
+              </div>
+              <button type="button" className="icon-button" onClick={() => setShowTemplateDrawer(false)} title="Close templates" aria-label="Close templates"><X size={19} /></button>
+            </div>
+            <p className="template-drawer-intro">Choose a starting point, then tune the roadmap to fit your work.</p>
+            <div className="template-card-list">
+              {templateOptions.map((template) => (
+                <button
+                  key={template.id}
+                  type="button"
+                  className={`template-card${template.id === selectedTemplateId ? ' selected' : ''}`}
+                  onClick={() => onTemplateChange(template.id)}
+                  aria-pressed={template.id === selectedTemplateId}
+                >
+                  <span className="template-preview" aria-hidden="true">
+                    {template.lanes.map((lane, laneIndex) => (
+                      <span className="template-preview-row" key={lane.id}>
+                        <span className="template-preview-label">{lane.name}</span>
+                        <span className="template-preview-track">
+                          {template.tasks.filter((task) => task.laneId === lane.id).map((task) => (
+                            <span
+                              className="template-preview-task"
+                              key={task.title}
+                              style={{ left: `${Math.min(task.startDay / (template.monthSpan * 30) * 100, 92)}%`, width: `${Math.max(Math.min(task.duration / (template.monthSpan * 30) * 100, 48), 8)}%`, backgroundColor: task.color }}
+                            />
+                          ))}
+                        </span>
+                        <span className="template-preview-index">{String(laneIndex + 1).padStart(2, '0')}</span>
+                      </span>
+                    ))}
+                  </span>
+                  <span className="template-card-copy">
+                    <strong>{template.name}</strong>
+                    <span>{template.lanes.length} lanes / {template.monthSpan} months</span>
+                  </span>
+                  {template.id === selectedTemplateId && <span className="template-card-check">Selected</span>}
+                </button>
+              ))}
+            </div>
+            <div className="template-drawer-footer">
+              <label className="year-field">
+                <span>Start</span>
+                <input type="month" value={getMonthInputValue(timelineRangeSelection.start)} onChange={(event) => onTimelineStartChange(event.target.value)} />
+              </label>
+              <button type="button" className="template-load-button" onClick={() => { onApplyTemplate(selectedTemplateId, getMonthInputValue(timelineRangeSelection.start)); setShowTemplateDrawer(false); }}>
+                Use template
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
     </>
   );
 }
