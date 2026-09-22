@@ -1,0 +1,20 @@
+{
+  "id": "learning-ai-rag",
+  "name": "Learning AI and RAG",
+  "title": "Learning AI and RAG",
+  "subtitle": "Self-paced AI product roadmap",
+  "monthSpan": 9,
+  "lanes": [
+    { "id": "learn", "name": "Learn" },
+    { "id": "build", "name": "Build" },
+    { "id": "ship", "name": "Ship" }
+  ],
+  "tasks": [
+    { "laneId": "learn", "title": "Python + SQL foundations", "startDay": 0, "duration": 24, "color": "#247ba0", "tags": ["Python", "Data"] },
+    { "laneId": "learn", "title": "LLM fundamentals", "startDay": 20, "duration": 28, "color": "#70c1b3", "tags": ["AI", "Models"] },
+    { "laneId": "build", "title": "Prompt engineering lab", "startDay": 42, "duration": 24, "color": "#f3b562", "tags": ["Prompting", "Labs"] },
+    { "laneId": "build", "title": "RAG architecture", "startDay": 70, "duration": 36, "color": "#7f5af0", "tags": ["Retrieval", "RAG"] },
+    { "laneId": "build", "title": "Evaluation and safety", "startDay": 110, "duration": 28, "color": "#2cb67d", "tags": ["Eval", "Safety"] },
+    { "laneId": "ship", "title": "Capstone app launch", "startDay": 148, "duration": 34, "color": "#f25f5c", "tags": ["Portfolio", "Demo"] }
+  ]
+}

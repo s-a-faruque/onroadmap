@@ -1,0 +1,20 @@
+{
+  "id": "devops-mastery",
+  "name": "DevOps mastery",
+  "title": "DevOps mastery",
+  "subtitle": "Modern platform engineering roadmap",
+  "monthSpan": 8,
+  "lanes": [
+    { "id": "foundation", "name": "Foundation" },
+    { "id": "automation", "name": "Automation" },
+    { "id": "reliability", "name": "Reliability" }
+  ],
+  "tasks": [
+    { "laneId": "foundation", "title": "Linux + networking fundamentals", "startDay": 0, "duration": 20, "color": "#247ba0", "tags": ["Linux", "Networking"] },
+    { "laneId": "foundation", "title": "Containers and orchestration", "startDay": 24, "duration": 28, "color": "#70c1b3", "tags": ["Docker", "Kubernetes"] },
+    { "laneId": "automation", "title": "CI/CD pipeline design", "startDay": 48, "duration": 26, "color": "#f3b562", "tags": ["CI", "Delivery"] },
+    { "laneId": "automation", "title": "Infrastructure as code", "startDay": 78, "duration": 32, "color": "#7f5af0", "tags": ["Terraform", "IaC"] },
+    { "laneId": "reliability", "title": "Observability and alerts", "startDay": 112, "duration": 28, "color": "#2cb67d", "tags": ["Monitoring", "SRE"] },
+    { "laneId": "reliability", "title": "Disaster recovery drill", "startDay": 146, "duration": 24, "color": "#f25f5c", "tags": ["Resilience", "Ops"] }
+  ]
+}
