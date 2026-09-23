@@ -33,14 +33,14 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
   ];
 
   const stats = [
-    { value: '1 browser', label: 'No setup required' },
+    { value: '1', label: 'Browser. No setup required' },
     { value: '100%', label: 'Private by default' },
     { value: '4x', label: 'Faster planning loops' },
   ];
 
   const checklist = [
     'Drag tasks across the timeline and resize them naturally',
-    'Switch between month and week views without losing context',
+    'Switch between month, week and day views without losing context',
     'Export a polished roadmap to share with your team',
   ];
 
@@ -81,12 +81,11 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
         <section className="px-6 py-12 lg:px-8 lg:py-16">
           <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16">
             <div>
-            <h1 className="max-w-xl text-5xl font-semibold tracking-[-0.06em] text-slate-900 sm:text-6xl lg:text-[5rem]">
-              Turn big ideas into a roadmap.
-            </h1>
-
+              <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+                Stop dragging boxes in PowerPoint. Build clear roadmaps in minutes.
+              </h2>
             <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
-              Build a confident product plan in minutes. Shape priorities, keep work visible, and share the plan without adding more process.
+              Use templates to start with a clear structure, then drag and resize tasks to shape the plan as priorities change.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
