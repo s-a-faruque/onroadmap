@@ -78,7 +78,7 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
       </header>
 
       <main className="mx-auto">
-        <section className="grid min-h-[calc(100vh-77px)] items-center gap-16 px-6 py-16 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-20">
+        <section className="grid items-center gap-12 px-6 py-12 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16 lg:px-8 lg:py-16">
           <div>
             <h1 className="max-w-xl text-5xl font-semibold tracking-[-0.06em] text-slate-900 sm:text-6xl lg:text-[5rem]">
               Turn big ideas into a roadmap.
@@ -182,7 +182,7 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
           </div>
         </section>
 
-        <section id="features" className="min-h-screen border-t border-slate-200 bg-[#ffffff] px-6 py-20 lg:px-8">
+        <section id="features" className="border-t border-slate-200 bg-[#ffffff] px-6 py-12 lg:px-8 lg:py-16">
           <div className="mx-auto max-w-4xl text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-700">Built for better planning</p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
@@ -203,7 +203,7 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
           </div>
         </section>
 
-        <section id="why" className="grid min-h-screen items-center gap-8 border-t border-slate-200 bg-[#f5f5fe] px-6 py-20 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+        <section id="why" className="grid items-center gap-8 border-t border-slate-200 bg-[#f5f5fe] px-6 py-12 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:py-16">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-violet-700">Why teams switch</p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
@@ -252,7 +252,7 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
           </div>
         </section>
 
-        <section className="border-t border-slate-200 bg-[#ffffff] py-20 text-center lg:px-8">
+        <section className="border-t border-slate-200 bg-[#ffffff] px-6 py-12 text-center lg:px-8 lg:py-16">
           
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-700">Start with the plan you have</p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
