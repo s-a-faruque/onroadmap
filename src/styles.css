@@ -1318,6 +1318,7 @@ select {
   color: var(--green);
   font-size: 0.84rem;
   font-weight: 900;
+  border-bottom: 1px solid var(--line);
 }
 
 .week-cell {
