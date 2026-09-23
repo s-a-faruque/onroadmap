@@ -49,8 +49,8 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
         bg-[size:24px_24px] text-slate-900">
       <div className="absolute inset-x-0 top-0 -z-10 h-[42rem]" />
 
-      <header className="mx-auto border-b border-slate-200 bg-[#ffffff]/90 px-6 py-4 backdrop-blur-sm lg:px-8 sticky top-0 z-10">
-        <nav className="flex items-center justify-between">
+      <header className="sticky top-0 z-10 border-b border-slate-200 bg-[#ffffff]/90 px-6 py-4 backdrop-blur-sm lg:px-8">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center text-sm font-bold text-slate-900">
               {appConfig.branding.enabled && <div className="brand-lockup">
@@ -78,8 +78,9 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
       </header>
 
       <main className="mx-auto">
-        <section className="grid items-center gap-12 px-6 py-12 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16 lg:px-8 lg:py-16">
-          <div>
+        <section className="px-6 py-12 lg:px-8 lg:py-16">
+          <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16">
+            <div>
             <h1 className="max-w-xl text-5xl font-semibold tracking-[-0.06em] text-slate-900 sm:text-6xl lg:text-[5rem]">
               Turn big ideas into a roadmap.
             </h1>
@@ -115,9 +116,9 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
                 </div>
               ))}
             </div>
-          </div>
+            </div>
 
-          <div id="product" className="relative">
+            <div id="product" className="relative">
             <div className="absolute -inset-8 bg-[radial-gradient(circle,_rgba(16,185,129,0.16),_transparent_55%)] blur-3xl" />
             <div className="relative overflow-hidden border border-slate-200 bg-white p-4 shadow-[0_30px_80px_rgba(15,23,42,0.08)]">
               <div className="border border-slate-200 bg-[#f8f7f4] p-4">
@@ -179,32 +180,36 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
                 </div>
               </div>
             </div>
+            </div>
           </div>
         </section>
 
         <section id="features" className="border-t border-slate-200 bg-[#ffffff] px-6 py-12 lg:px-8 lg:py-16">
-          <div className="mx-auto max-w-4xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-700">Built for better planning</p>
-            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-              Everything your roadmap needs, without the overhead.
-            </h2>
-          </div>
+          <div className="mx-auto max-w-6xl">
+            <div className="mx-auto max-w-4xl text-center">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-700">Built for better planning</p>
+              <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+                Everything your roadmap needs, without the overhead.
+              </h2>
+            </div>
 
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {features.map(({ icon: Icon, title, description }) => (
-              <article key={title} className="border border-slate-200 bg-white p-6">
-                <div className="mb-5 flex h-12 w-12 items-center justify-center bg-white text-slate-900 ring-1 ring-inset ring-slate-200">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <h3 className="text-xl font-semibold text-slate-900">{title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{description}</p>
-              </article>
-            ))}
+            <div className="mt-12 grid gap-6 md:grid-cols-3">
+              {features.map(({ icon: Icon, title, description }) => (
+                <article key={title} className="border border-slate-200 bg-white p-6">
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center bg-white text-slate-900 ring-1 ring-inset ring-slate-200">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900">{title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">{description}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section id="why" className="grid items-center gap-8 border-t border-slate-200 bg-[#f5f5fe] px-6 py-12 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:py-16">
-          <div>
+        <section id="why" className="border-t border-slate-200 bg-[#f5f5fe] px-6 py-12 lg:px-8 lg:py-16">
+          <div className="mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+            <div>
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-violet-700">Why teams switch</p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
               Plan clearly. Move deliberately.
@@ -219,9 +224,9 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
                 </li>
               ))}
             </ul>
-          </div>
+            </div>
 
-          <div className="border border-slate-200 bg-[#f8f7f4] p-5 shadow-[0_15px_35px_rgba(15,23,42,0.04)]">
+            <div className="border border-slate-200 bg-[#f8f7f4] p-5 shadow-[0_15px_35px_rgba(15,23,42,0.04)]">
             <div className="flex items-center justify-between border-b border-slate-200 pb-4">
               <div>
                 <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-slate-500">Delivery pulse</p>
@@ -249,11 +254,12 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
                 </div>
               ))}
             </div>
+            </div>
           </div>
         </section>
 
         <section className="border-t border-slate-200 bg-[#ffffff] px-6 py-12 text-center lg:px-8 lg:py-16">
-          
+          <div className="mx-auto max-w-4xl">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-700">Start with the plan you have</p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
               A roadmap that stays clear as the work changes.
@@ -266,7 +272,7 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
               Open the planner
               <ArrowRight className="h-4 w-4" />
             </button>
-          
+          </div>
         </section>
       </main>
     </div>
