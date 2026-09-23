@@ -3,7 +3,10 @@ import {
   BarChart3,
   Check,
   Clock3,
+  Columns3,
+  LayoutTemplate,
   Play,
+  Printer,
   ShieldCheck,
   SquareMousePointer,
 } from 'lucide-react';
@@ -18,17 +21,32 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
     {
       icon: BarChart3,
       title: 'See the whole plan',
-      description: 'Keep the annual roadmap in one clear view while you shape priorities week by week.',
+      description: 'Switch between month, week and day views without losing context.',
     },
     {
       icon: SquareMousePointer,
       title: 'Move faster with less friction',
-      description: 'Edit timelines, adjust owners, and keep momentum without losing the big picture.',
+      description: 'Drag tasks across the timeline and resize them naturally.',
     },
     {
       icon: ShieldCheck,
       title: 'Built for privacy',
       description: 'Your roadmap lives locally in the browser, so the plan stays under your control.',
+    },
+    {
+      icon: LayoutTemplate,
+      title: 'Start from a strong template',
+      description: 'Start with a proven structure and tailor the plan to your priorities without rebuilding from scratch.',
+    },
+    {
+      icon: Columns3,
+      title: 'Organize by swimlane',
+      description: 'Group work by team, initiative, or goal so the roadmap stays easy to scan and easy to share.',
+    },
+    {
+      icon: Printer,
+      title: 'Ready for print and sharing',
+      description: 'Keep a polished, presentation-ready plan for updates, reviews, and stakeholder conversations.',
     },
   ];
 
@@ -36,12 +54,6 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
     { value: '1', label: 'Browser. No setup required' },
     { value: '100%', label: 'Private by default' },
     { value: '4x', label: 'Faster planning loops' },
-  ];
-
-  const checklist = [
-    'Drag tasks across the timeline and resize them naturally',
-    'Switch between month, week and day views without losing context',
-    'Export a polished roadmap to share with your team',
   ];
 
   return (
@@ -63,7 +75,6 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
           <div className="hidden items-center gap-8 text-sm text-slate-600 md:flex">
             <a href="#product" className="transition hover:text-slate-900">Product</a>
             <a href="#features" className="transition hover:text-slate-900">Features</a>
-            <a href="#why" className="transition hover:text-slate-900">Why it matters</a>
           </div>
 
           <button
@@ -204,64 +215,13 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
               ))}
             </div>
           </div>
-        </section>
+        </section>        
 
-        <section id="why" className="border-t border-slate-200 bg-[#f5f5fe] px-6 py-12 lg:px-8 lg:py-16">
-          <div className="mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-            <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-violet-700">Why teams switch</p>
-            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-              Plan clearly. Move deliberately.
-            </h2>
-            <ul className="mt-8 space-y-4">
-              {checklist.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-slate-700">
-                  <span className="mt-0.5 flex h-6 w-6 items-center justify-center bg-emerald-100 text-emerald-700 ring-1 ring-inset ring-emerald-200">
-                    <Check className="h-3.5 w-3.5" />
-                  </span>
-                  <span className="leading-7">{item}</span>
-                </li>
-              ))}
-            </ul>
-            </div>
-
-            <div className="border border-slate-200 bg-[#f8f7f4] p-5 shadow-[0_15px_35px_rgba(15,23,42,0.04)]">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-              <div>
-                <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-slate-500">Delivery pulse</p>
-                <h3 className="mt-2 text-xl font-semibold text-slate-900">Quarterly priorities</h3>
-              </div>
-              <div className="bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
-                On track
-              </div>
-            </div>
-
-            <div className="mt-6 space-y-4">
-              {[
-                { label: 'Platform refresh', value: '78%', color: 'bg-emerald-500' },
-                { label: 'Content systems', value: '62%', color: 'bg-violet-500' },
-                { label: 'Security review', value: '88%', color: 'bg-cyan-500' },
-              ].map((row) => (
-                <div key={row.label}>
-                  <div className="mb-2 flex items-center justify-between text-sm text-slate-600">
-                    <span>{row.label}</span>
-                    <span>{row.value}</span>
-                  </div>
-                  <div className="h-2.5 bg-slate-200">
-                    <div className={`h-2.5 ${row.color}`} style={{ width: row.value }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="border-t border-slate-200 bg-[#ffffff] px-6 py-12 text-center lg:px-8 lg:py-16">
+        <section className="border-t border-slate-200 px-6 py-12 text-center lg:px-8 lg:py-16">
           <div className="mx-auto max-w-4xl">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-700">Start with the plan you have</p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-              A roadmap that stays clear as the work changes.
+              A roadmap that stays clear to present and print.
             </h2>
             <button
               type="button"
@@ -274,6 +234,10 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
           </div>
         </section>
       </main>
+
+      <footer className="border-t border-slate-200 bg-white px-6 py-6 text-center text-sm text-slate-500 lg:px-8">
+        <p>© {new Date().getFullYear()} {appConfig.branding.name}. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
