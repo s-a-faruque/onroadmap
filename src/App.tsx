@@ -16,7 +16,7 @@ import { localRoadmapStore } from './storage';
 import type { RoadmapState, RoadmapTask, SnapMode, TimelineView } from './types';
 import { PlannerHeader } from './components/PlannerHeader';
 import { DragMode, RoadmapTimeline } from './components/RoadmapTimeline';
-import { LandingPage } from './components/LandingPage';
+import { LandingPageTW } from './components/LandingPageTW';
 import { TaskInventory } from './components/TaskInventory';
 import { Analytics } from '@vercel/analytics/react';
 import { ROADMAP_TEMPLATES, buildRoadmapFromTemplate } from './templates';
@@ -346,7 +346,7 @@ function App() {
   }, [activeSnapMode, dayCount, dayWidth, dragSession, timelineMonthSpan, timelineStartMonth, timelineYear]);
 
   if (showLanding) {
-    return <LandingPage onOpenPlanner={() => { window.location.hash = 'planner'; }} />;
+    return <LandingPageTW onOpenPlanner={() => { window.location.hash = 'planner'; }} />;
   }
 
   function startDrag(event: ReactPointerEvent, task: RoadmapTask, mode: DragMode) {
