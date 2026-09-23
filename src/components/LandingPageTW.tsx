@@ -5,7 +5,6 @@ import {
   Clock3,
   Play,
   ShieldCheck,
-  Sparkles,
   SquareMousePointer,
 } from 'lucide-react';
 import { appConfig } from '../appConfig';
@@ -46,7 +45,8 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#ffffff] text-slate-900">
+    <div className="min-h-screen bg-[#ffffff] bg-white bg-[radial-gradient(#bfdbfe_1px,transparent_1px)] [background-size:16px_16px]
+        bg-[size:24px_24px] text-slate-900">
       <div className="absolute inset-x-0 top-0 -z-10 h-[42rem]" />
 
       <header className="mx-auto border-b border-slate-200 bg-[#ffffff]/90 px-6 py-4 backdrop-blur-sm lg:px-8 sticky top-0 z-10">
@@ -81,7 +81,7 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
         <section className="grid min-h-[calc(100vh-77px)] items-center gap-16 px-6 py-16 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-20">
           <div>
             <h1 className="max-w-xl text-5xl font-semibold tracking-[-0.06em] text-slate-900 sm:text-6xl lg:text-[5rem]">
-              Turn big ideas into a roadmap everyone can follow.
+              Turn big ideas into a roadmap.
             </h1>
 
             <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
@@ -98,13 +98,13 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
                 <ArrowRight className="h-4 w-4" />
               </button>
 
-              <button
+              {/* <button
                 type="button"
                 className="inline-flex items-center gap-2 border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-300 hover:bg-slate-50"
               >
                 <Play className="h-4 w-4" />
                 See how it works
-              </button>
+              </button> */}
             </div>
 
             <div className="mt-10 grid max-w-lg grid-cols-3 gap-4 text-left">
