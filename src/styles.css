@@ -1121,7 +1121,7 @@ select {
 }
 
 .template-load-button {
-  display: inline-flex;
+  /* display: inline-flex; */
   width: auto;
   gap: 8px;
   padding: 0 12px;
