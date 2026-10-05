@@ -150,7 +150,7 @@ export function PlannerHeader({
               <div className="timeline-settings" aria-label="Timeline settings">
                 <label className="setting-toggle">
                   <input type="checkbox" checked={printFriendly} onChange={onTogglePrintFriendly} />
-                  <span><Printer size={15} /> Print friendly</span>
+                  <span><Printer size={15} /> Printify</span>
                 </label>
               </div>
               {enabledSnapModes.length > 0 && (
