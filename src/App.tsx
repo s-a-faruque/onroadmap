@@ -460,11 +460,25 @@ function App() {
         import('html2canvas'),
         import('jspdf'),
       ]);
+      const tableWidth = Math.max(
+        tableElement.scrollWidth,
+        tableElement.querySelector('table')?.scrollWidth ?? 0,
+      );
       const [canvas, logo] = await Promise.all([
         html2canvas(tableElement, {
           backgroundColor: activeTheme.colors.paper,
           scale: 2,
           useCORS: true,
+          width: tableWidth,
+          onclone: (documentClone) => {
+            const clonedPanel = documentClone.querySelector('.task-table-panel') as HTMLElement | null;
+            const clonedTableScroll = clonedPanel?.querySelector('.task-table-scroll') as HTMLElement | null;
+
+            if (clonedPanel && clonedTableScroll) {
+              clonedPanel.style.width = `${tableWidth}px`;
+              clonedTableScroll.style.overflow = 'visible';
+            }
+          },
         }),
         appConfig.branding.enabled ? loadLogoImage() : Promise.resolve(null),
       ]);
@@ -473,19 +487,29 @@ function App() {
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
       const margin = 24;
-      const titleHeight = 30;
       const logoSize = 22;
-      const imageWidth = pageWidth - margin * 2;
-      const imageHeight = Math.min((canvas.height * imageWidth) / canvas.width, pageHeight - margin * 2 - titleHeight);
-
+      const brandingOffset = logo ? logoSize + 10 : 0;
+      const titleX = margin + brandingOffset;
+      const titleWidth = pageWidth - margin * 2 - brandingOffset;
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(16);
+      const titleLines = pdf.splitTextToSize(
+        appConfig.branding.enabled ? `${appConfig.branding.name} task inventory` : 'Roadmap task inventory',
+        titleWidth,
+      );
+      const titleHeight = Math.max(30, titleLines.length * 19 + 8);
+      const availableWidth = pageWidth - margin * 2;
+      const availableHeight = pageHeight - margin * 2 - titleHeight;
+      const imageScale = Math.min(availableWidth / canvas.width, availableHeight / canvas.height);
+      const imageWidth = canvas.width * imageScale;
+      const imageHeight = canvas.height * imageScale;
+
       pdf.setTextColor(23, 33, 29);
       if (logo) {
         pdf.addImage(logo, 'PNG', margin, margin - 4, logoSize, logoSize);
       }
-      pdf.text(appConfig.branding.enabled ? `${appConfig.branding.name} task inventory` : 'Roadmap task inventory', margin + (logo ? logoSize + 10 : 0), margin + 16);
-      pdf.addImage(image, 'PNG', margin, margin + titleHeight, imageWidth, imageHeight);
+      pdf.text(titleLines, titleX, margin + 16);
+      pdf.addImage(image, 'PNG', margin + (availableWidth - imageWidth) / 2, margin + titleHeight, imageWidth, imageHeight);
       pdf.save(`flash-roadmap-tasks-${timelineYear}.pdf`);
     } catch (error) {
       console.error('Unable to export task table PDF', error);
@@ -521,27 +545,34 @@ function App() {
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
       const margin = 28;
-      const titleHeight = 42;
       const logoSize = 26;
-      const imageWidth = pageWidth - margin * 2;
-      const imageHeight = Math.min(
-        (canvas.height * imageWidth) / canvas.width,
-        pageHeight - margin * 2 - titleHeight,
-      );
+      const brandingOffset = logo ? logoSize + 12 : 0;
+      const textX = margin + brandingOffset;
+      const textWidth = pageWidth - margin * 2 - brandingOffset;
 
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(9);
       pdf.setTextColor(107, 114, 128);
-      const brandingOffset = logo ? logoSize + 12 : 0;
-      pdf.text(roadmap.subtitle, margin + brandingOffset, margin + 11);
+      const subtitleLines = pdf.splitTextToSize(roadmap.subtitle || ' ', textWidth);
+      pdf.text(subtitleLines, textX, margin + 11);
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(18);
       pdf.setTextColor(23, 33, 29);
+      const titleLines = pdf.splitTextToSize(roadmap.title || ' ', textWidth);
+      const titleY = margin + 32 + Math.max(subtitleLines.length - 1, 0) * 11;
+      const titleHeight = Math.max(42, titleY - margin + (titleLines.length - 1) * 21 + 10);
       if (logo) {
         pdf.addImage(logo, 'PNG', margin, margin - 6, logoSize, logoSize);
       }
-      pdf.text(roadmap.title, margin + brandingOffset, margin + 32);
-      pdf.addImage(image, 'PNG', margin, margin + titleHeight, imageWidth, imageHeight, undefined, 'FAST');
+      pdf.text(titleLines, textX, titleY);
+      const availableWidth = pageWidth - margin * 2;
+      const availableHeight = pageHeight - margin * 2 - titleHeight;
+      const imageScale = Math.min(availableWidth / canvas.width, availableHeight / canvas.height);
+      const imageWidth = canvas.width * imageScale;
+      const imageHeight = canvas.height * imageScale;
+      const imageX = margin + (availableWidth - imageWidth) / 2;
+      const imageY = margin + titleHeight;
+      pdf.addImage(image, 'PNG', imageX, imageY, imageWidth, imageHeight, undefined, 'FAST');
       const watermark = appConfig.controls.pdfWatermark;
       if (watermark.enabled) {
         const watermarkColumns = Math.max(watermark.columns, 1);
@@ -566,7 +597,7 @@ function App() {
       pdf.setTextColor(23, 33, 29);
       pdf.setDrawColor(156, 163, 175);
       pdf.setLineWidth(1);
-      pdf.rect(margin, margin + titleHeight, imageWidth, imageHeight);
+      pdf.rect(imageX, imageY, imageWidth, imageHeight);
       pdf.rect(14, 14, pageWidth - 28, pageHeight - 28);
       pdf.save(`flash-roadmap-${timelineYear}.pdf`);
     } catch (error) {

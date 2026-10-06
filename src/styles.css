@@ -1411,6 +1411,7 @@ select {
   min-width: 0;
   overflow: hidden;
   padding: 7px 9px;
+  line-height: 1.4;
   border: 1px solid transparent;
   border-radius: 6px;
   background: rgba(var(--paper-rgb), 0.9);
@@ -1497,11 +1498,32 @@ select {
 .task-content input {
   width: 100%;
   min-width: 0;
+  line-height: 1.4;
   border: 0;
   background: transparent;
   color: var(--ink);
   font-size: 0.86rem;
   font-weight: 400;
+}
+
+.print-friendly-task-pill .task-content {
+  width: 100%;
+  flex: 0 1 auto;
+}
+
+.print-friendly-task-pill .task-content input {
+  text-align: center;
+}
+
+.print-friendly-task-title {
+  display: block;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 0.86rem;
+  line-height: 1.4;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .task-labels {
@@ -1513,6 +1535,19 @@ select {
   gap: 3px;
   overflow: visible;
   flex: 0 1 auto;
+}
+
+.print-friendly-labels {
+  width: 100%;
+  max-width: none;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.4;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .task-label,
@@ -1729,6 +1764,7 @@ select {
   width: 100%;
   min-height: 38px;
   padding: 8px 10px;
+  line-height: 1.4;
   border: 1px solid var(--line);
   border-radius: 7px;
   background: rgba(var(--paper-rgb), 0.82);
