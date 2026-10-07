@@ -517,6 +517,11 @@ function App() {
   }
 
   async function exportRoadmapPdf() {
+    setPrintFriendly(true);
+    await new Promise<void>((resolve) => {
+      window.requestAnimationFrame(() => window.requestAnimationFrame(() => resolve()));
+    });
+
     const timelineElement = timelineRef.current;
 
     if (!timelineElement) {

@@ -1459,10 +1459,10 @@ select {
   gap: 7px;
   height: 48px;
   min-width: 42px;
-  overflow: visible;
+  overflow: scroll;
   border: 1px solid;
   /* border-radius: 8px; */
-  padding: 10px 12px;
+  padding: 0 8px;
   background: var(--paper);
   box-shadow: none;
   touch-action: none;
@@ -1519,12 +1519,13 @@ select {
 .print-friendly-task-title {
   display: block;
   overflow: visible;
+  overflow-wrap: break-word;
   color: var(--ink);
   font-size: 0.86rem;
   line-height: 1.4;
   text-align: center;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .task-labels {

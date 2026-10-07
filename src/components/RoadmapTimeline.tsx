@@ -152,23 +152,19 @@ export function RoadmapTimeline({
                           ? <div className="print-friendly-task-title">{task.title}</div>
                           : <input value={task.title} onPointerDown={(event) => event.stopPropagation()} onChange={(event) => onTaskChange(task.id, { title: event.target.value })} aria-label="Task title" />}
                       </div>
-                      {task.tags.length > 0 && <span className={`task-labels${printFriendly ? ' print-friendly-labels' : ''}`} aria-label={`Labels: ${task.tags.join(', ')}`}>
-                        {printFriendly
-                          ? task.tags.join(', ')
-                          : <>
-                              <span className="task-label">{task.tags[0]}</span>
-                              {hasAdditionalLabels && <button
-                                type="button"
-                                className="task-label-count"
-                                aria-expanded={isLabelsExpanded}
-                                aria-label={`${task.tags.length - 1} additional label${task.tags.length === 2 ? '' : 's'}`}
-                                onPointerDown={(event) => event.stopPropagation()}
-                                onClick={() => setExpandedTaskId(isLabelsExpanded ? null : task.id)}
-                              >+{task.tags.length - 1}</button>}
-                              {isLabelsExpanded && <span className="task-label-popover" role="list" aria-label="Additional labels">
-                                {task.tags.slice(1).map((tag, index) => <span key={`${tag}-${index}`} role="listitem">{tag}</span>)}
-                              </span>}
-                            </>}
+                      {!printFriendly && task.tags.length > 0 && <span className="task-labels" aria-label={`Labels: ${task.tags.join(', ')}`}>
+                        <span className="task-label">{task.tags[0]}</span>
+                        {hasAdditionalLabels && <button
+                          type="button"
+                          className="task-label-count"
+                          aria-expanded={isLabelsExpanded}
+                          aria-label={`${task.tags.length - 1} additional label${task.tags.length === 2 ? '' : 's'}`}
+                          onPointerDown={(event) => event.stopPropagation()}
+                          onClick={() => setExpandedTaskId(isLabelsExpanded ? null : task.id)}
+                        >+{task.tags.length - 1}</button>}
+                        {isLabelsExpanded && <span className="task-label-popover" role="list" aria-label="Additional labels">
+                          {task.tags.slice(1).map((tag, index) => <span key={`${tag}-${index}`} role="listitem">{tag}</span>)}
+                        </span>}
                       </span>}
                       {!printFriendly && <span className="task-color-picker"><span className="task-color-swatch" style={{ background: task.color }} /><input className="task-color" type="color" value={task.color} onPointerDown={(event) => event.stopPropagation()} onChange={(event) => onTaskChange(task.id, { color: event.target.value })} aria-label="Task color" /></span>}
                       {!printFriendly && <button type="button" className="delete-task-button timeline-delete-task" onPointerDown={(event) => event.stopPropagation()} onClick={() => onDeleteTask(task.id)} aria-label={`Delete ${task.title}`}><Trash2 size={14} /></button>}
