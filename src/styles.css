@@ -1455,13 +1455,14 @@ select {
   position: absolute;
   top: 18px;
   display: flex;
-  align-items: center;
+  align-items: center; 
   gap: 7px;
-  height: 32px;
+  height: 48px;
   min-width: 42px;
   overflow: visible;
   border: 1px solid;
   /* border-radius: 8px; */
+  padding: 10px 12px;
   background: var(--paper);
   box-shadow: none;
   touch-action: none;
@@ -1517,7 +1518,7 @@ select {
 
 .print-friendly-task-title {
   display: block;
-  overflow: hidden;
+  overflow: visible;
   color: var(--ink);
   font-size: 0.86rem;
   line-height: 1.4;
