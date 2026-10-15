@@ -201,6 +201,7 @@ function App() {
   const [timelineView, setTimelineView] = useState<TimelineView>('month');
   const [snapMode, setSnapMode] = useState<SnapMode>(appConfig.controls.defaultSnapMode);
   const [printFriendly, setPrintFriendly] = useState(false);
+  const [pdfPagesWide, setPdfPagesWide] = useState(1);
   const [dragSession, setDragSession] = useState<DragSession | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -482,7 +483,6 @@ function App() {
         }),
         appConfig.branding.enabled ? loadLogoImage() : Promise.resolve(null),
       ]);
-      const image = canvas.toDataURL('image/png');
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
@@ -503,6 +503,7 @@ function App() {
       const imageScale = Math.min(availableWidth / canvas.width, availableHeight / canvas.height);
       const imageWidth = canvas.width * imageScale;
       const imageHeight = canvas.height * imageScale;
+      const image = canvas.toDataURL('image/png');
 
       pdf.setTextColor(23, 33, 29);
       if (logo) {
@@ -545,7 +546,6 @@ function App() {
         }),
         appConfig.branding.enabled ? loadLogoImage() : Promise.resolve(null),
       ]);
-      const image = canvas.toDataURL('image/png');
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
@@ -566,44 +566,77 @@ function App() {
       const titleLines = pdf.splitTextToSize(roadmap.title || ' ', textWidth);
       const titleY = margin + 32 + Math.max(subtitleLines.length - 1, 0) * 11;
       const titleHeight = Math.max(42, titleY - margin + (titleLines.length - 1) * 21 + 10);
-      if (logo) {
-        pdf.addImage(logo, 'PNG', margin, margin - 6, logoSize, logoSize);
-      }
-      pdf.text(titleLines, textX, titleY);
       const availableWidth = pageWidth - margin * 2;
       const availableHeight = pageHeight - margin * 2 - titleHeight;
-      const imageScale = Math.min(availableWidth / canvas.width, availableHeight / canvas.height);
-      const imageWidth = canvas.width * imageScale;
-      const imageHeight = canvas.height * imageScale;
-      const imageX = margin + (availableWidth - imageWidth) / 2;
-      const imageY = margin + titleHeight;
-      pdf.addImage(image, 'PNG', imageX, imageY, imageWidth, imageHeight, undefined, 'FAST');
       const watermark = appConfig.controls.pdfWatermark;
-      if (watermark.enabled) {
-        const watermarkColumns = Math.max(watermark.columns, 1);
-        const watermarkRows = Math.max(watermark.rows, 1);
-        const watermarkGState = pdf.GState({ opacity: watermark.opacity });
+      const pageColumns = pdfPagesWide;
+      const sourcePageWidth = canvas.width / pageColumns;
+      const imageScale = availableWidth / sourcePageWidth;
+      const sourcePageHeight = availableHeight / imageScale;
+      const pageRows = Math.ceil(canvas.height / sourcePageHeight);
 
-        pdf.setGState(watermarkGState);
-        pdf.setTextColor(120, 120, 120);
-        pdf.setFontSize(watermark.fontSize);
-        for (let row = 0; row < watermarkRows; row += 1) {
-          for (let column = 0; column < watermarkColumns; column += 1) {
-            pdf.text(
-              watermark.text,
-              (pageWidth * (column + 0.5)) / watermarkColumns,
-              (pageHeight * (row + 0.5)) / watermarkRows,
-              { align: 'center', angle: watermark.angle },
-            );
+      for (let row = 0; row < pageRows; row += 1) {
+        for (let column = 0; column < pageColumns; column += 1) {
+          if (row > 0 || column > 0) {
+            pdf.addPage();
           }
+          if (logo) {
+            pdf.addImage(logo, 'PNG', margin, margin - 6, logoSize, logoSize);
+          }
+          pdf.setFont('helvetica', 'normal');
+          pdf.setFontSize(9);
+          pdf.setTextColor(107, 114, 128);
+          pdf.text(subtitleLines, textX, margin + 11);
+          pdf.setFont('helvetica', 'bold');
+          pdf.setFontSize(18);
+          pdf.setTextColor(23, 33, 29);
+          pdf.text(titleLines, textX, titleY);
+
+          const sourceX = column * sourcePageWidth;
+          const sourceY = row * sourcePageHeight;
+          const sourceWidth = Math.min(sourcePageWidth, canvas.width - sourceX);
+          const sourceHeight = Math.min(sourcePageHeight, canvas.height - sourceY);
+          const pageCanvas = document.createElement('canvas');
+          pageCanvas.width = Math.ceil(sourceWidth);
+          pageCanvas.height = Math.ceil(sourceHeight);
+          const pageContext = pageCanvas.getContext('2d');
+
+          if (!pageContext) {
+            throw new Error('Unable to create PDF page canvas');
+          }
+
+          pageContext.drawImage(canvas, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, pageCanvas.width, pageCanvas.height);
+          const imageWidth = sourceWidth * imageScale;
+          const imageHeight = sourceHeight * imageScale;
+          const imageX = margin;
+          const imageY = margin + titleHeight;
+          pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', imageX, imageY, imageWidth, imageHeight, undefined, 'FAST');
+
+          if (watermark.enabled) {
+            const watermarkColumns = Math.max(watermark.columns, 1);
+            const watermarkRows = Math.max(watermark.rows, 1);
+            pdf.setGState(pdf.GState({ opacity: watermark.opacity }));
+            pdf.setTextColor(120, 120, 120);
+            pdf.setFontSize(watermark.fontSize);
+            for (let watermarkRow = 0; watermarkRow < watermarkRows; watermarkRow += 1) {
+              for (let watermarkColumn = 0; watermarkColumn < watermarkColumns; watermarkColumn += 1) {
+                pdf.text(
+                  watermark.text,
+                  (pageWidth * (watermarkColumn + 0.5)) / watermarkColumns,
+                  (pageHeight * (watermarkRow + 0.5)) / watermarkRows,
+                  { align: 'center', angle: watermark.angle },
+                );
+              }
+            }
+            pdf.setGState(pdf.GState({ opacity: 1 }));
+          }
+
+          pdf.setDrawColor(156, 163, 175);
+          pdf.setLineWidth(1);
+          pdf.rect(imageX, imageY, imageWidth, imageHeight);
+          pdf.rect(14, 14, pageWidth - 28, pageHeight - 28);
         }
-        pdf.setGState(pdf.GState({ opacity: 1 }));
       }
-      pdf.setTextColor(23, 33, 29);
-      pdf.setDrawColor(156, 163, 175);
-      pdf.setLineWidth(1);
-      pdf.rect(imageX, imageY, imageWidth, imageHeight);
-      pdf.rect(14, 14, pageWidth - 28, pageHeight - 28);
       pdf.save(`flash-roadmap-${timelineYear}.pdf`);
     } catch (error) {
       console.error('Unable to export roadmap PDF', error);
@@ -697,6 +730,7 @@ function App() {
         timelineRangeSelection={timelineRangeSelection}
         timelineView={timelineView}
         activeSnapMode={activeSnapMode}
+        pdfPagesWide={pdfPagesWide}
         fileInputRef={fileInputRef}
         getMonthInputValue={getMonthInputValue}
         templateOptions={ROADMAP_TEMPLATES}
@@ -710,6 +744,7 @@ function App() {
         onTimelineEndChange={updateTimelineEnd}
         onViewChange={setTimelineView}
         onSnapModeChange={setSnapMode}
+        onPdfPagesWideChange={setPdfPagesWide}
         onTogglePrintFriendly={() => setPrintFriendly((current) => !current)}
         onUndo={undoRoadmap}
         canUndo={undoStackRef.current.length > 0}

@@ -1157,6 +1157,22 @@ select {
   color: var(--accent);
 }
 
+.pdf-page-break-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pdf-page-break-control select {
+  height: 36px;
+  padding: 0 8px;
+  font-size: 0.78rem;
+}
+
 .file-actions .pdf-download-button:hover {
   background: var(--accent);
   color: var(--paper);

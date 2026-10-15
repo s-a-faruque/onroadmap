@@ -11,7 +11,7 @@ A lightweight, responsive 1-year roadmap planner for dragging and stretching pro
 - Snap task movement to day, week, or month boundaries.
 - Editable task titles, color badges, comma-separated tags, and swimlane names.
 - LocalStorage autosave plus complete JSON export/import.
-- PDF download of the full roadmap timeline.
+- Multi-page PDF download of the full roadmap timeline, with selectable page breaks across one to four pages wide.
 
 ## Development
 

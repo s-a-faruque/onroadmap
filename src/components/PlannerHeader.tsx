@@ -9,6 +9,7 @@ interface PlannerHeaderProps {
   timelineRangeSelection: { start: { year: number; monthIndex: number }; end: { year: number; monthIndex: number } };
   timelineView: TimelineView;
   activeSnapMode: SnapMode;
+  pdfPagesWide: number;
   fileInputRef: RefObject<HTMLInputElement | null>;
   getMonthInputValue: (month: { year: number; monthIndex: number }) => string;
   templateOptions: RoadmapTemplate[];
@@ -22,6 +23,7 @@ interface PlannerHeaderProps {
   onTimelineEndChange: (value: string) => void;
   onViewChange: (view: TimelineView) => void;
   onSnapModeChange: (snapMode: SnapMode) => void;
+  onPdfPagesWideChange: (pagesWide: number) => void;
   onTogglePrintFriendly: () => void;
   onUndo: () => void;
   canUndo: boolean;
@@ -36,6 +38,7 @@ export function PlannerHeader({
   timelineRangeSelection,
   timelineView,
   activeSnapMode,
+  pdfPagesWide,
   fileInputRef,
   getMonthInputValue,
   templateOptions,
@@ -49,6 +52,7 @@ export function PlannerHeader({
   onTimelineEndChange,
   onViewChange,
   onSnapModeChange,
+  onPdfPagesWideChange,
   onTogglePrintFriendly,
   onUndo,
   canUndo,
@@ -166,7 +170,17 @@ export function PlannerHeader({
                   </>
                 )}
                 {appConfig.controls.enableJsonExport && <button type="button" className="icon-button" onClick={onExport} title="Export JSON" aria-label="Export JSON"><Download size={18} /><span>Export</span></button>}
-                {appConfig.controls.enablePdfDownload && <button type="button" className="icon-button pdf-download-button" onClick={onExportPdf} title="Download PDF" aria-label="Download PDF"><FileDown size={18} /><span>PDF</span></button>}
+                {appConfig.controls.enablePdfDownload && (
+                  <>
+                    <label className="pdf-page-break-control">
+                      <span>PDF pages wide</span>
+                      <select aria-label="PDF pages wide" value={pdfPagesWide} onChange={(event) => onPdfPagesWideChange(Number(event.target.value))}>
+                        {[1, 2, 3, 4].map((pagesWide) => <option key={pagesWide} value={pagesWide}>{pagesWide} page{pagesWide === 1 ? '' : 's'} wide</option>)}
+                      </select>
+                    </label>
+                    <button type="button" className="icon-button pdf-download-button" onClick={onExportPdf} title="Download PDF" aria-label="Download PDF"><FileDown size={18} /><span>PDF</span></button>
+                  </>
+                )}
               </div>
             </div>
           </details>
