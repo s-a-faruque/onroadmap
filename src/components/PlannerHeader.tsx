@@ -97,6 +97,9 @@ export function PlannerHeader({
           >
             Overview
           </button>
+          <a className="planner-nav-action" href="/templates">
+            Templates
+          </a>
           <button 
             className="planner-nav-action" 
             type="button" 

@@ -17,6 +17,7 @@ import type { RoadmapState, RoadmapTask, SnapMode, TimelineView } from './types'
 import { PlannerHeader } from './components/PlannerHeader';
 import { DragMode, RoadmapTimeline } from './components/RoadmapTimeline';
 import { LandingPageTW } from './components/LandingPageTW';
+import { TemplatesPage } from './components/TemplatesPage';
 import { TaskInventory } from './components/TaskInventory';
 import { Analytics } from '@vercel/analytics/react';
 import { ROADMAP_TEMPLATES, buildRoadmapFromTemplate } from './templates';
@@ -214,20 +215,25 @@ function App() {
   const timelineYear = configuredStartYear;
   const timelineRange = formatTimelineRange(timelineYear, timelineStartMonth, timelineMonthSpan);
   const dayCount = getYearDayCount(timelineYear, timelineStartMonth, timelineMonthSpan);
-  const dayWidth = timelineView === 'week' ? 18 : timelineView === 'day' ? 12 : 4.8;
+  const dayWidth = timelineView === 'week' ? 18 : timelineView === 'day' ? 13.8 : 4.8;
   const timelineWidth = dayCount * dayWidth;
   const months = useMemo(() => monthSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
   const quarters = useMemo(() => quarterSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
   const weeks = useMemo(() => weekSegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
   const days = useMemo(() => daySegments(timelineYear, timelineStartMonth, timelineMonthSpan), [timelineYear, timelineStartMonth, timelineMonthSpan]);
   useEffect(() => {
-    function handleHashChange() {
-      setShowLanding(window.location.hash !== '#planner');
+    function syncRoute() {
+      const isTemplatesPage = window.location.pathname.replace(/\/+$/, '') === '/templates';
+      setShowLanding(!isTemplatesPage && window.location.hash !== '#planner');
     }
 
-    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('hashchange', syncRoute);
+    window.addEventListener('popstate', syncRoute);
 
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', syncRoute);
+      window.removeEventListener('popstate', syncRoute);
+    };
   }, []);
 
   useEffect(() => {
@@ -345,6 +351,20 @@ function App() {
       window.removeEventListener('pointerup', handlePointerUp);
     };
   }, [activeSnapMode, dayCount, dayWidth, dragSession, timelineMonthSpan, timelineStartMonth, timelineYear]);
+
+  if (window.location.pathname.replace(/\/+$/, '') === '/templates') {
+    return (
+      <TemplatesPage
+        templates={ROADMAP_TEMPLATES}
+        initialStartValue={getMonthInputValue(timelineRangeSelection.start)}
+        onUseTemplate={(templateId, startValue) => {
+          applyTemplate(templateId, startValue);
+          window.history.pushState({}, '', '/#planner');
+          setShowLanding(false);
+        }}
+      />
+    );
+  }
 
   if (showLanding) {
     return <LandingPageTW onOpenPlanner={() => { window.location.hash = 'planner'; }} />;

@@ -75,6 +75,7 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
           <div className="hidden items-center gap-8 text-sm text-slate-600 md:flex">
             <a href="#product" className="transition hover:text-slate-900">Product</a>
             <a href="#features" className="transition hover:text-slate-900">Features</a>
+            <a href="/templates" className="transition hover:text-slate-900">Templates</a>
           </div>
 
           <button
@@ -108,6 +109,13 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
                 Start planning
                 <ArrowRight className="h-4 w-4" />
               </button>
+              <a
+                href="/templates"
+                className="inline-flex items-center gap-2 px-2 py-3 text-sm font-semibold text-slate-700 transition hover:text-slate-900"
+              >
+                Browse templates
+                <ArrowRight className="h-4 w-4" />
+              </a>
 
               {/* <button
                 type="button"
