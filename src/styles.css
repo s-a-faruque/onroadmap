@@ -1957,6 +1957,7 @@ select {
 
 .templates-brand {
   color: var(--ink);
+  text-transform: uppercase;
   text-decoration: none;
 }
 
