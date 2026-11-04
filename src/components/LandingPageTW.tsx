@@ -202,6 +202,36 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
           </div>
         </section>
 
+        <section className="border-t border-slate-200 px-6 py-12 lg:px-8 lg:py-16">
+          <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2 lg:gap-16">
+            <div className="overflow-hidden border border-slate-200 bg-white">
+              <img
+                src="/planner.jpg"
+                alt="Planner reviewing project documents at her desk"
+                className="aspect-[4/3] h-full w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-700">Make the shape of work visible</p>
+              <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                A plan you can see, share, and keep moving.
+              </h2>
+              <p className="mt-5 max-w-xl leading-7 text-slate-600">
+                Turn scattered ideas into a timeline that gives every next step a place. Keep the big picture close while the details change underneath it.
+              </p>
+              <button
+                type="button"
+                onClick={onOpenPlanner}
+                className="mt-7 inline-flex items-center gap-2 bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+              >
+                Open the planner
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </section>
+
         <section id="features" className="border-t border-slate-200 bg-[#ffffff] px-6 py-12 lg:px-8 lg:py-16">
           <div className="mx-auto max-w-6xl">
             <div className="mx-auto max-w-4xl text-center">
