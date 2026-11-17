@@ -1,7 +1,7 @@
 import { PointerEvent as ReactPointerEvent, RefObject, useMemo, useState } from 'react';
 import { GripVertical, Plus, Trash2 } from 'lucide-react';
 import { dateToDay } from '../dateMath';
-import type { RoadmapState, RoadmapTask, TimelineView } from '../types';
+import type { RoadmapState, RoadmapTask, TimelineDesign, TimelineView } from '../types';
 
 const MIN_LANE_HEIGHT = 86;
 const MIN_LANE_LABEL_WIDTH = 150;
@@ -28,6 +28,7 @@ export interface LaneTaskLayout {
 
 interface RoadmapTimelineProps {
   roadmap: RoadmapState;
+  timelineDesign: TimelineDesign;
   timelineRef: RefObject<HTMLDivElement | null>;
   timelineView: TimelineView;
   timelineYear: number;
@@ -70,7 +71,7 @@ function getLaneTaskLayouts(roadmap: RoadmapState, timelineYear: number, startMo
 }
 
 export function RoadmapTimeline({
-  roadmap, timelineRef, timelineView, timelineYear, timelineStartMonth, timelineMonthSpan,
+  roadmap, timelineDesign, timelineRef, timelineView, timelineYear, timelineStartMonth, timelineMonthSpan,
   dayCount, dayWidth, timelineWidth, months, quarters, weeks, days, draggingTaskId,
   printFriendly, onStartDrag, onTaskChange, onDeleteTask, onLaneChange, onDeleteLane, onAddTask,
 }: RoadmapTimelineProps) {
@@ -100,7 +101,7 @@ export function RoadmapTimeline({
   };
 
   return (
-    <section className="timeline-card" aria-label="Roadmap timeline">
+    <section className={`timeline-card timeline-design-${timelineDesign}`} aria-label="Roadmap timeline">
       <div className="timeline-scroll">
         <div ref={timelineRef} className="timeline" style={{ width: laneLabelWidth + timelineWidth }}>
           <div className={`timeline-header ${timelineView === 'week' ? 'weekly-header' : ''} ${timelineView === 'day' ? 'daily-header' : ''}`}>
@@ -144,7 +145,7 @@ export function RoadmapTimeline({
                     const width = Math.max((endDay - startDay + 1) * dayWidth, 42);
                     const hasAdditionalLabels = task.tags.length > 1;
                     const isLabelsExpanded = expandedTaskId === task.id;
-                    return <article className={`task-pill ${draggingTaskId === task.id ? 'dragging' : ''}`} key={task.id} title={task.tags.join(', ')} style={{ left: startDay * dayWidth, top: TASK_TOP + rowIndex * TASK_ROW_HEIGHT, width, borderColor: task.color }} onPointerDown={(event) => onStartDrag(event, task, 'move')}>
+                    return <article className={`task-pill ${draggingTaskId === task.id ? 'dragging' : ''}`} key={task.id} title={task.tags.join(', ')} style={{ left: startDay * dayWidth, top: TASK_TOP + rowIndex * TASK_ROW_HEIGHT, width, borderColor: task.color, backgroundColor: timelineDesign === 'flow' ? `color-mix(in srgb, ${task.color} 18%, var(--paper))` : 'var(--paper)' }} onPointerDown={(event) => onStartDrag(event, task, 'move')}>
                       {!printFriendly && <button type="button" className="resize-handle left" onPointerDown={(event) => { event.stopPropagation(); onStartDrag(event, task, 'resize-left'); }} aria-label={`Resize ${task.title} start`} />}
                       {!printFriendly && <GripVertical className="drag-grip" size={15} />}
                       <div className="task-content">

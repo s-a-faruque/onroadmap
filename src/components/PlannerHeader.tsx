@@ -1,8 +1,8 @@
 import { ChangeEvent, RefObject, useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Download, FileDown, LayoutTemplate, Moon, Plus, Printer, Sun, Undo2, Upload, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, FileDown, LayoutTemplate, Moon, PanelsTopLeft, Plus, Printer, Sun, Undo2, Upload, X } from 'lucide-react';
 import { appConfig } from '../appConfig';
 import type { RoadmapTemplate } from '../templates';
-import type { RoadmapState, SnapMode, TimelineView } from '../types';
+import type { RoadmapState, SnapMode, TimelineDesign, TimelineView } from '../types';
 
 interface PlannerHeaderProps {
   roadmap: RoadmapState;
@@ -18,6 +18,8 @@ interface PlannerHeaderProps {
   onApplyTemplate: (templateId: string, startValue: string) => void;
   selectedThemeId: string;
   onToggleTheme: () => void;
+  timelineDesign: TimelineDesign;
+  onToggleTimelineDesign: () => void;
   printFriendly: boolean;
   onTitleChange: (title: string) => void;
   onSubtitleChange: (subtitle: string) => void;
@@ -49,6 +51,8 @@ export function PlannerHeader({
   onApplyTemplate,
   selectedThemeId,
   onToggleTheme,
+  timelineDesign,
+  onToggleTimelineDesign,
   printFriendly,
   onTitleChange,
   onSubtitleChange,
@@ -123,6 +127,16 @@ export function PlannerHeader({
             aria-label={`Switch to ${selectedThemeId === 'midnight' ? 'Cool light' : 'Midnight'} theme`}
           >
             {selectedThemeId === 'midnight' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+          <button
+            type="button"
+            className="icon-button planner-design-toggle"
+            onClick={onToggleTimelineDesign}
+            title={`Switch to ${timelineDesign === 'classic' ? 'Flow' : 'Classic'} timeline design`}
+            aria-label={`Switch to ${timelineDesign === 'classic' ? 'Flow' : 'Classic'} timeline design`}
+            aria-pressed={timelineDesign === 'flow'}
+          >
+            <PanelsTopLeft size={18} />
           </button>
         </div>
       </nav>

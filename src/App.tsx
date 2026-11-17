@@ -13,7 +13,7 @@ import {
 } from './dateMath';
 import { appConfig } from './appConfig';
 import { localRoadmapStore } from './storage';
-import type { RoadmapState, RoadmapTask, SnapMode, TimelineView } from './types';
+import type { RoadmapState, RoadmapTask, SnapMode, TimelineDesign, TimelineView } from './types';
 import { PlannerHeader } from './components/PlannerHeader';
 import { DragMode, RoadmapTimeline } from './components/RoadmapTimeline';
 import { LandingPageTW } from './components/LandingPageTW';
@@ -24,6 +24,7 @@ import { ROADMAP_TEMPLATES, buildRoadmapFromTemplate } from './templates';
 
 const TIMELINE_RANGE_STORAGE_KEY = 'onroadmap.timelineRange.v1';
 const THEME_STORAGE_KEY = 'onroadmap.theme.v1';
+const TIMELINE_DESIGN_STORAGE_KEY = 'onroadmap.timelineDesign.v1';
 const MAX_UNDO_STEPS = 50;
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -209,6 +210,9 @@ function App() {
       ? storedThemeId
       : appConfig.themes.defaultTheme;
   });
+  const [timelineDesign, setTimelineDesign] = useState<TimelineDesign>(() => (
+    window.localStorage.getItem(TIMELINE_DESIGN_STORAGE_KEY) === 'flow' ? 'flow' : 'classic'
+  ));
   const [pdfPagesWide, setPdfPagesWide] = useState(1);
   const [dragSession, setDragSession] = useState<DragSession | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -288,6 +292,10 @@ function App() {
   useEffect(() => {
     window.localStorage.setItem(THEME_STORAGE_KEY, selectedThemeId);
   }, [selectedThemeId]);
+
+  useEffect(() => {
+    window.localStorage.setItem(TIMELINE_DESIGN_STORAGE_KEY, timelineDesign);
+  }, [timelineDesign]);
 
   useEffect(() => {
     if (!dragSession) {
@@ -773,6 +781,8 @@ function App() {
         onApplyTemplate={applyTemplate}
         selectedThemeId={selectedThemeId}
         onToggleTheme={() => setSelectedThemeId((currentThemeId) => currentThemeId === 'midnight' ? 'cool-light' : 'midnight')}
+        timelineDesign={timelineDesign}
+        onToggleTimelineDesign={() => setTimelineDesign((currentDesign) => currentDesign === 'classic' ? 'flow' : 'classic')}
         printFriendly={printFriendly}
         onTitleChange={(title) => updateRoadmap((currentRoadmap) => ({ ...currentRoadmap, title }))}
         onSubtitleChange={(subtitle) => updateRoadmap((currentRoadmap) => ({ ...currentRoadmap, subtitle }))}
@@ -791,6 +801,7 @@ function App() {
       />
       <RoadmapTimeline
         roadmap={roadmap}
+        timelineDesign={timelineDesign}
         timelineRef={timelineRef}
         timelineView={timelineView}
         timelineYear={timelineYear}

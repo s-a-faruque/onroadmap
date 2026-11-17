@@ -585,6 +585,12 @@ button {
   margin-left: 4px;
 }
 
+.planner-design-toggle[aria-pressed='true'] {
+  border-color: var(--green);
+  background: rgba(var(--green-rgb), 0.12);
+  color: var(--green);
+}
+
 .topbar {
   display: flex;
   align-items: flex-end;
@@ -1206,6 +1212,43 @@ select {
   border-radius: 8px;
   background: rgba(var(--paper-rgb), 0.88);
   box-shadow: none;
+}
+
+.timeline-design-flow {
+  border-color: var(--line);
+  border-radius: 14px;
+  box-shadow: 0 14px 36px rgba(var(--ink-rgb), 0.08);
+}
+
+.timeline-design-flow .timeline-header {
+  border-bottom-width: 2px;
+}
+
+.timeline-design-flow .lane-header {
+  background: var(--green);
+  color: var(--paper);
+}
+
+.timeline-design-flow .lane-label {
+  border-left: 4px solid var(--green);
+}
+
+.timeline-design-flow .lane-row {
+  background: rgba(var(--green-rgb), 0.06);
+}
+
+.timeline-design-flow .lane-row:nth-child(even) {
+  background: rgba(var(--green-rgb), 0.025);
+}
+
+.timeline-design-flow .task-pill {
+  border-radius: 999px;
+  box-shadow: 0 3px 10px rgba(var(--ink-rgb), 0.09);
+}
+
+.timeline-design-flow .task-pill:hover,
+.timeline-design-flow .task-pill:focus-within {
+  box-shadow: 0 8px 20px rgba(var(--ink-rgb), 0.17);
 }
 
 .timeline-scroll {

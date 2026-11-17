@@ -1,4 +1,5 @@
 export type TimelineView = 'month' | 'week' | 'day';
+export type TimelineDesign = 'classic' | 'flow';
 export type SnapMode = 'day' | 'week' | 'month';
 
 export interface RoadmapLane {
