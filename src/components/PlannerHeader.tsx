@@ -1,7 +1,6 @@
 import { ChangeEvent, RefObject, useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Download, FileDown, LayoutTemplate, Palette, Plus, Printer, Undo2, Upload, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, FileDown, LayoutTemplate, Moon, Plus, Printer, Sun, Undo2, Upload, X } from 'lucide-react';
 import { appConfig } from '../appConfig';
-import type { ThemeOption } from '../appConfig';
 import type { RoadmapTemplate } from '../templates';
 import type { RoadmapState, SnapMode, TimelineView } from '../types';
 
@@ -17,9 +16,8 @@ interface PlannerHeaderProps {
   selectedTemplateId: string;
   onTemplateChange: (templateId: string) => void;
   onApplyTemplate: (templateId: string, startValue: string) => void;
-  themes: ThemeOption[];
   selectedThemeId: string;
-  onThemeChange: (themeId: string) => void;
+  onToggleTheme: () => void;
   printFriendly: boolean;
   onTitleChange: (title: string) => void;
   onSubtitleChange: (subtitle: string) => void;
@@ -49,9 +47,8 @@ export function PlannerHeader({
   selectedTemplateId,
   onTemplateChange,
   onApplyTemplate,
-  themes,
   selectedThemeId,
-  onThemeChange,
+  onToggleTheme,
   printFriendly,
   onTitleChange,
   onSubtitleChange,
@@ -96,7 +93,7 @@ export function PlannerHeader({
           <img className="brand-logo" src={appConfig.branding.logo} alt={`${appConfig.branding.name} logo`} />
           <span>{appConfig.branding.name}</span>
         </div>}
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <div className="planner-nav-links">
           <button 
             className="planner-nav-action" 
             type="button" 
@@ -117,6 +114,15 @@ export function PlannerHeader({
             }}
           >
             Feedback
+          </button>
+          <button
+            type="button"
+            className="icon-button planner-theme-toggle"
+            onClick={onToggleTheme}
+            title={`Switch to ${selectedThemeId === 'midnight' ? 'Cool light' : 'Midnight'} theme`}
+            aria-label={`Switch to ${selectedThemeId === 'midnight' ? 'Cool light' : 'Midnight'} theme`}
+          >
+            {selectedThemeId === 'midnight' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         </div>
       </nav>
@@ -165,12 +171,6 @@ export function PlannerHeader({
                 <label className="setting-toggle">
                   <input type="checkbox" checked={printFriendly} onChange={onTogglePrintFriendly} />
                   <span><Printer size={15} /> Printify</span>
-                </label>
-                <label className="theme-setting">
-                  <span><Palette size={15} /> Theme</span>
-                  <select aria-label="Timeline theme" value={selectedThemeId} onChange={(event) => onThemeChange(event.target.value)}>
-                    {themes.map((theme) => <option key={theme.id} value={theme.id}>{theme.label}</option>)}
-                  </select>
                 </label>
               </div>
               {enabledSnapModes.length > 0 && (

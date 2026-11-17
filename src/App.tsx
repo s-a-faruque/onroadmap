@@ -771,9 +771,8 @@ function App() {
         selectedTemplateId={selectedTemplateId}
         onTemplateChange={setSelectedTemplateId}
         onApplyTemplate={applyTemplate}
-        themes={appConfig.themes.options}
         selectedThemeId={selectedThemeId}
-        onThemeChange={setSelectedThemeId}
+        onToggleTheme={() => setSelectedThemeId((currentThemeId) => currentThemeId === 'midnight' ? 'cool-light' : 'midnight')}
         printFriendly={printFriendly}
         onTitleChange={(title) => updateRoadmap((currentRoadmap) => ({ ...currentRoadmap, title }))}
         onSubtitleChange={(subtitle) => updateRoadmap((currentRoadmap) => ({ ...currentRoadmap, subtitle }))}

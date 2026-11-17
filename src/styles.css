@@ -575,6 +575,16 @@ button {
   font-weight: 800;
 }
 
+.planner-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.planner-theme-toggle {
+  margin-left: 4px;
+}
+
 .topbar {
   display: flex;
   align-items: flex-end;
@@ -759,32 +769,6 @@ h1 {
   align-items: center;
   gap: 6px;
   white-space: nowrap;
-}
-
-.theme-setting {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--ink);
-  font-size: 0.8rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.theme-setting > span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.theme-setting select {
-  min-height: 32px;
-  padding: 0 7px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--paper);
-  color: var(--ink);
-  font-size: 0.78rem;
 }
 
 @keyframes reveal-more-controls {
