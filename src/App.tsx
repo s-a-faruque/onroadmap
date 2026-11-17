@@ -23,6 +23,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { ROADMAP_TEMPLATES, buildRoadmapFromTemplate } from './templates';
 
 const TIMELINE_RANGE_STORAGE_KEY = 'onroadmap.timelineRange.v1';
+const THEME_STORAGE_KEY = 'onroadmap.theme.v1';
 const MAX_UNDO_STEPS = 50;
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -202,6 +203,12 @@ function App() {
   const [timelineView, setTimelineView] = useState<TimelineView>('month');
   const [snapMode, setSnapMode] = useState<SnapMode>(appConfig.controls.defaultSnapMode);
   const [printFriendly, setPrintFriendly] = useState(false);
+  const [selectedThemeId, setSelectedThemeId] = useState(() => {
+    const storedThemeId = window.localStorage.getItem(THEME_STORAGE_KEY);
+    return storedThemeId && appConfig.themes.options.some((theme) => theme.id === storedThemeId)
+      ? storedThemeId
+      : appConfig.themes.defaultTheme;
+  });
   const [pdfPagesWide, setPdfPagesWide] = useState(1);
   const [dragSession, setDragSession] = useState<DragSession | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -211,7 +218,9 @@ function App() {
   const activeSnapMode = enabledSnapModes.some((snapOption) => snapOption.value === snapMode)
     ? snapMode
     : appConfig.controls.defaultSnapMode;
-  const activeTheme = appConfig.themes.options.find((theme) => theme.id === appConfig.themes.defaultTheme) ?? appConfig.themes.options[0];
+  const activeTheme = appConfig.themes.options.find((theme) => theme.id === selectedThemeId)
+    ?? appConfig.themes.options.find((theme) => theme.id === appConfig.themes.defaultTheme)
+    ?? appConfig.themes.options[0];
   const timelineYear = configuredStartYear;
   const timelineRange = formatTimelineRange(timelineYear, timelineStartMonth, timelineMonthSpan);
   const dayCount = getYearDayCount(timelineYear, timelineStartMonth, timelineMonthSpan);
@@ -269,11 +278,16 @@ function App() {
       '--track': activeTheme.colors.track,
       '--accent': activeTheme.colors.accent,
       '--green': activeTheme.colors.green,
+      '--green-rgb': activeTheme.colors.greenRgb,
       '--shadow': activeTheme.colors.shadow,
     }).forEach(([property, value]) => {
       document.documentElement.style.setProperty(property, value);
     });
   }, [activeTheme]);
+
+  useEffect(() => {
+    window.localStorage.setItem(THEME_STORAGE_KEY, selectedThemeId);
+  }, [selectedThemeId]);
 
   useEffect(() => {
     if (!dragSession) {
@@ -757,6 +771,9 @@ function App() {
         selectedTemplateId={selectedTemplateId}
         onTemplateChange={setSelectedTemplateId}
         onApplyTemplate={applyTemplate}
+        themes={appConfig.themes.options}
+        selectedThemeId={selectedThemeId}
+        onThemeChange={setSelectedThemeId}
         printFriendly={printFriendly}
         onTitleChange={(title) => updateRoadmap((currentRoadmap) => ({ ...currentRoadmap, title }))}
         onSubtitleChange={(subtitle) => updateRoadmap((currentRoadmap) => ({ ...currentRoadmap, subtitle }))}

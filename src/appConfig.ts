@@ -20,6 +20,7 @@ export interface ThemeOption {
     track: string;
     accent: string;
     green: string;
+    greenRgb: string;
     shadow: string;
   };
 }
@@ -90,7 +91,65 @@ export const appConfig: RoadmapAppConfig = {
           track: '#eef3f7',
           accent: '#b85f3d',
           green: '#2f6372',
+          greenRgb: '47, 99, 114',
           shadow: '0 24px 60px rgba(31, 44, 58, 0.13)',
+        },
+      },
+      {
+        id: 'warm-paper',
+        label: 'Warm paper',
+        colors: {
+          appBackground: '#f5f0e7',
+          ink: '#302b25',
+          inkRgb: '48, 43, 37',
+          muted: '#766b5d',
+          paper: '#fffaf1',
+          paperRgb: '255, 250, 241',
+          line: '#dfd2bd',
+          lineRgb: '223, 210, 189',
+          track: '#eee4d3',
+          accent: '#b85f3d',
+          green: '#536c50',
+          greenRgb: '83, 108, 80',
+          shadow: '0 24px 60px rgba(48, 43, 37, 0.13)',
+        },
+      },
+      {
+        id: 'midnight',
+        label: 'Midnight',
+        colors: {
+          appBackground: '#111820',
+          ink: '#e7edf3',
+          inkRgb: '231, 237, 243',
+          muted: '#a2b0bf',
+          paper: '#1b2632',
+          paperRgb: '27, 38, 50',
+          line: '#354555',
+          lineRgb: '53, 69, 85',
+          track: '#263442',
+          accent: '#f0a36b',
+          green: '#75b8a5',
+          greenRgb: '117, 184, 165',
+          shadow: '0 24px 60px rgba(0, 0, 0, 0.32)',
+        },
+      },
+      {
+        id: 'forest',
+        label: 'Forest',
+        colors: {
+          appBackground: '#edf3ee',
+          ink: '#20362e',
+          inkRgb: '32, 54, 46',
+          muted: '#61766a',
+          paper: '#f9fcf8',
+          paperRgb: '249, 252, 248',
+          line: '#cad9ce',
+          lineRgb: '202, 217, 206',
+          track: '#e2ece4',
+          accent: '#bd704c',
+          green: '#31654f',
+          greenRgb: '49, 101, 79',
+          shadow: '0 24px 60px rgba(32, 54, 46, 0.13)',
         },
       },
     ],

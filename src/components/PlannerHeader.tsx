@@ -1,6 +1,7 @@
 import { ChangeEvent, RefObject, useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Download, FileDown, LayoutTemplate, Plus, Printer, Undo2, Upload, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, FileDown, LayoutTemplate, Palette, Plus, Printer, Undo2, Upload, X } from 'lucide-react';
 import { appConfig } from '../appConfig';
+import type { ThemeOption } from '../appConfig';
 import type { RoadmapTemplate } from '../templates';
 import type { RoadmapState, SnapMode, TimelineView } from '../types';
 
@@ -16,6 +17,9 @@ interface PlannerHeaderProps {
   selectedTemplateId: string;
   onTemplateChange: (templateId: string) => void;
   onApplyTemplate: (templateId: string, startValue: string) => void;
+  themes: ThemeOption[];
+  selectedThemeId: string;
+  onThemeChange: (themeId: string) => void;
   printFriendly: boolean;
   onTitleChange: (title: string) => void;
   onSubtitleChange: (subtitle: string) => void;
@@ -45,6 +49,9 @@ export function PlannerHeader({
   selectedTemplateId,
   onTemplateChange,
   onApplyTemplate,
+  themes,
+  selectedThemeId,
+  onThemeChange,
   printFriendly,
   onTitleChange,
   onSubtitleChange,
@@ -158,6 +165,12 @@ export function PlannerHeader({
                 <label className="setting-toggle">
                   <input type="checkbox" checked={printFriendly} onChange={onTogglePrintFriendly} />
                   <span><Printer size={15} /> Printify</span>
+                </label>
+                <label className="theme-setting">
+                  <span><Palette size={15} /> Theme</span>
+                  <select aria-label="Timeline theme" value={selectedThemeId} onChange={(event) => onThemeChange(event.target.value)}>
+                    {themes.map((theme) => <option key={theme.id} value={theme.id}>{theme.label}</option>)}
+                  </select>
                 </label>
               </div>
               {enabledSnapModes.length > 0 && (
