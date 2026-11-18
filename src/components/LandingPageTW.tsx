@@ -11,6 +11,7 @@ import {
   SquareMousePointer,
 } from 'lucide-react';
 import { appConfig } from '../appConfig';
+import { AuthControls } from './AuthControls';
 
 interface LandingPageTWProps {
   onOpenPlanner: () => void;
@@ -78,14 +79,17 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
             <a href="/templates" className="transition hover:text-slate-900">Templates</a>
           </div>
 
-          <button
-            type="button"
-            onClick={onOpenPlanner}
-            className="inline-flex items-center gap-2 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
-          >
-            Open planner
-            <ArrowRight className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            <AuthControls variant="landing" />
+            <button
+              type="button"
+              onClick={onOpenPlanner}
+              className="inline-flex items-center gap-2 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+            >
+              Open planner
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
         </nav>
       </header>
 

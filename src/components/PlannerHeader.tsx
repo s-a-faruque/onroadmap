@@ -1,6 +1,7 @@
 import { ChangeEvent, RefObject, useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Download, FileDown, LayoutTemplate, Moon, PanelsTopLeft, Plus, Printer, Sun, Undo2, Upload, X } from 'lucide-react';
 import { appConfig } from '../appConfig';
+import { AuthControls } from './AuthControls';
 import type { RoadmapTemplate } from '../templates';
 import type { RoadmapState, SnapMode, TimelineDesign, TimelineView } from '../types';
 
@@ -108,6 +109,7 @@ export function PlannerHeader({
           <a className="planner-nav-action" href="/templates">
             Templates
           </a>
+          <AuthControls variant="planner" />
           <button 
             className="planner-nav-action" 
             type="button" 

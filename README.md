@@ -28,6 +28,15 @@ npm run build
 
 ## Configuration
 
+Supabase sign-in is optional. Add your project URL and publishable/anon key to a local `.env` file:
+
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-supabase-publishable-or-anon-key
+```
+
+Enable Email in the Supabase project's Authentication providers to offer email/password and email magic-link sign-in. Add your app's local and deployed URLs to the Supabase Authentication URL configuration. Authentication only identifies the user; roadmaps continue to be stored in the current browser and are not synced to Supabase.
+
 Timeline and toolbar features are configured in `src/appConfig.ts`. You can change the timeline start year, end year, start month, month span, year selector visibility, available snap modes, default snap mode, JSON export/import visibility, and PDF download visibility there.
 
 Use `timeline.startMonth: 4` for an April-start roadmap or `timeline.startMonth: 1` for a January-start roadmap. The value is 1-based, so `1` is January and `12` is December.
