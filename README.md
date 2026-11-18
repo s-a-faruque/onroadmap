@@ -32,7 +32,7 @@ Supabase sign-in is optional. Add your project URL and publishable/anon key to a
 
 ```env
 VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-supabase-publishable-or-anon-key
+VITE_SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
 ```
 
 Enable Email in the Supabase project's Authentication providers to offer email/password and email magic-link sign-in. Add your app's local and deployed URLs to the Supabase Authentication URL configuration. Authentication only identifies the user; roadmaps continue to be stored in the current browser and are not synced to Supabase.

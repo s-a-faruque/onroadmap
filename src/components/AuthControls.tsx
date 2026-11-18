@@ -240,7 +240,7 @@ export function AuthControls({ variant }: AuthControlsProps) {
               </>
             ) : (
               <p className="auth-setup-message">
-                Supabase sign-in is not configured. Add <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code> to your environment to enable it.
+                Supabase sign-in is not configured. Add <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_PUBLISHABLE_KEY</code> to your environment to enable it.
               </p>
             )}
           </section>
