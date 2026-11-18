@@ -563,8 +563,11 @@ button {
 }
 
 .auth-dialog {
+  align-self: center;
+  justify-self: center;
   width: min(440px, 100%);
   max-height: calc(100vh - 48px);
+  margin: auto;
   overflow: auto;
   padding: 28px;
   border: 1px solid #e2e8f0;
