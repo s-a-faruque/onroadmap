@@ -28,6 +28,23 @@ const THEME_STORAGE_KEY = 'onroadmap.theme.v1';
 const TIMELINE_DESIGN_STORAGE_KEY = 'onroadmap.timelineDesign.v1';
 const MAX_UNDO_STEPS = 50;
 
+function getSharedTokenFromLocation() {
+  const sharedPathMatch = window.location.pathname.match(/^\/shared\/([^/]+)\/?$/);
+  if (sharedPathMatch) {
+    return decodeURIComponent(sharedPathMatch[1]);
+  }
+
+  if (window.location.hash.startsWith('#shared=')) {
+    return window.location.hash.slice('#shared='.length);
+  }
+
+  return null;
+}
+
+function redirectLegacyShareUrl(sharedToken: string) {
+  window.history.replaceState({}, '', `/shared/${encodeURIComponent(sharedToken)}`);
+}
+
 const CURRENT_YEAR = new Date().getFullYear();
 const COLORS = ['#f25f5c', '#247ba0', '#70c1b3', '#f3b562', '#7f5af0', '#2cb67d'];
 
@@ -189,9 +206,11 @@ function isValidTimelineRange(range: TimelineRange) {
 }
 
 function App() {
-  const sharedToken = window.location.hash.startsWith('#shared=')
-    ? window.location.hash.slice('#shared='.length)
-    : null;
+  const initialSharedToken = getSharedTokenFromLocation();
+  if (window.location.hash.startsWith('#shared=') && initialSharedToken) {
+    redirectLegacyShareUrl(initialSharedToken);
+  }
+  const sharedToken = getSharedTokenFromLocation();
   const [showLanding, setShowLanding] = useState(() => !sharedToken && window.location.hash !== '#planner');
   const [isReadOnlyShare, setIsReadOnlyShare] = useState(Boolean(sharedToken));
   const [sharedLoadError, setSharedLoadError] = useState('');
@@ -243,9 +262,10 @@ function App() {
   useEffect(() => {
     function syncRoute() {
       const isTemplatesPage = window.location.pathname.replace(/\/+$/, '') === '/templates';
-      const nextSharedToken = window.location.hash.startsWith('#shared=')
-        ? window.location.hash.slice('#shared='.length)
-        : null;
+      const nextSharedToken = getSharedTokenFromLocation();
+      if (window.location.hash.startsWith('#shared=') && nextSharedToken) {
+        redirectLegacyShareUrl(nextSharedToken);
+      }
       setIsReadOnlyShare(Boolean(nextSharedToken));
       setShowLanding(!isTemplatesPage && !nextSharedToken && window.location.hash !== '#planner');
     }
@@ -429,7 +449,27 @@ function App() {
             <p>Shared view</p>
             <strong>{roadmap.title}</strong>
           </div>
-          {sharedLoadError ? <span role="alert">{sharedLoadError}</span> : <span>Read-only</span>}
+          <div className="shared-roadmap-controls">
+            <div className="segmented" aria-label="Timeline view">
+              {(['month', 'week', 'day'] as TimelineView[]).map((view) => (
+                <button key={view} className={timelineView === view ? 'active' : ''} type="button" onClick={() => setTimelineView(view)}>
+                  {view}
+                </button>
+              ))}
+            </div>
+            {appConfig.controls.enablePdfDownload && (
+              <label className="pdf-page-break-control">
+                <span>PDF pages wide</span>
+                <select aria-label="PDF pages wide" value={pdfPagesWide} onChange={(event) => setPdfPagesWide(Number(event.target.value))}>
+                  {[1, 2, 3, 4].map((pagesWide) => <option key={pagesWide} value={pagesWide}>{pagesWide} page{pagesWide === 1 ? '' : 's'} wide</option>)}
+                </select>
+              </label>
+            )}
+            {appConfig.controls.enablePdfDownload && (
+              <button type="button" className="icon-button pdf-download-button" onClick={exportRoadmapPdf}>PDF</button>
+            )}
+            {sharedLoadError ? <span role="alert">{sharedLoadError}</span> : <span>Read-only</span>}
+          </div>
         </section>
         <RoadmapTimeline
           roadmap={roadmap}

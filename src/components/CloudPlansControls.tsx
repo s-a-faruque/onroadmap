@@ -135,7 +135,7 @@ export function CloudPlansControls({ roadmap, onLoad }: CloudPlansControlsProps)
       )));
 
       if (shareToken) {
-        const url = `${window.location.origin}${window.location.pathname}#shared=${shareToken}`;
+        const url = `${window.location.origin}/shared/${encodeURIComponent(shareToken)}`;
         await navigator.clipboard?.writeText(url);
         setMessage('Public link created and copied.');
       } else {

@@ -802,9 +802,17 @@ button {
   background: #fff;
 }
 
-.shared-roadmap-banner div {
+.shared-roadmap-banner > div:first-child {
   display: grid;
   gap: 3px;
+}
+
+.shared-roadmap-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .shared-roadmap-banner p {
@@ -2438,7 +2446,13 @@ select {
   }
 
   .shared-roadmap-banner {
+    align-items: flex-start;
+    flex-direction: column;
     margin: 14px 0;
+  }
+
+  .shared-roadmap-controls {
+    justify-content: flex-start;
   }
 
   .app-shell {

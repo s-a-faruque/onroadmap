@@ -3,6 +3,10 @@
     {
       "source": "/templates",
       "destination": "/"
+    },
+    {
+      "source": "/shared/:token",
+      "destination": "/"
     }
   ]
 }
