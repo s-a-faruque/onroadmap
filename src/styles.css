@@ -737,7 +737,31 @@ button {
 .cloud-plans-trigger {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
+  min-height: 42px;
+  padding: 0 13px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.cloud-plans-save {
+  border: 1px solid #0f172a;
+  background: #0f172a;
+  color: #fff;
+  box-shadow: 0 5px 16px rgba(15, 23, 42, 0.14);
+}
+
+.cloud-plans-save:hover:not(:disabled) {
+  background: #047857;
+  border-color: #047857;
+}
+
+.cloud-plans-trigger {
+  border: 1px solid var(--line);
+  background: rgba(var(--paper-rgb), 0.82);
+  color: var(--ink);
 }
 
 .cloud-plans-save:disabled,

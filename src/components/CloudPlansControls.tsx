@@ -145,7 +145,7 @@ export function CloudPlansControls({ roadmap, onLoad }: CloudPlansControlsProps)
 
   return (
     <>
-      <button type="button" className="planner-nav-action cloud-plans-save" onClick={() => savePlan(false, true)} disabled={!user || isWorking}>
+      <button type="button" className="cloud-plans-save" onClick={() => savePlan(false, true)} disabled={!user || isWorking}>
         <Cloud size={16} />
         <span>{directSaveStatus === 'working' ? 'Saving...' : directSaveStatus === 'saved' ? 'Saved to Cloud' : directSaveStatus === 'error' ? 'Save failed' : 'Save on Cloud'}</span>
       </button>
