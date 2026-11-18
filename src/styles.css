@@ -763,15 +763,15 @@ button {
 }
 
 .cloud-plans-save {
-  border: 1px solid #0f172a;
-  background: #0f172a;
+  border: 1px solid var(--green);
+  background: var(--green);
   color: #fff;
   box-shadow: 0 5px 16px rgba(15, 23, 42, 0.14);
 }
 
 .cloud-plans-save:hover:not(:disabled) {
-  background: #047857;
-  border-color: #047857;
+  background: var(--green);
+  border-color: var(--green);
 }
 
 .cloud-plans-trigger {
@@ -1251,6 +1251,98 @@ h1 {
   white-space: nowrap;
 }
 
+.export-menu {
+  position: relative;
+}
+
+.export-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(var(--paper-rgb), 0.82);
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  list-style: none;
+}
+
+.export-menu-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.export-menu[open] .export-menu-trigger {
+  border-color: var(--green);
+  background: rgba(var(--ink-rgb), 0.03);
+}
+
+.export-menu[open] .export-menu-trigger > svg:last-child {
+  transform: rotate(180deg);
+}
+
+.export-menu-content {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 248px;
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  box-shadow: var(--shadow);
+}
+
+.export-menu-row,
+.export-menu-action {
+  min-height: 40px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--ink);
+}
+
+.export-menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.export-menu-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0 8px;
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-align: left;
+}
+
+.export-menu-action:hover,
+.export-menu-row:hover {
+  background: rgba(var(--ink-rgb), 0.05);
+}
+
+.export-menu-select select {
+  min-height: 34px;
+  height: 34px;
+  max-width: 140px;
+  padding: 0 8px;
+  font-size: 0.78rem;
+}
+
 @keyframes reveal-more-controls {
   from {
     opacity: 0;
@@ -1643,8 +1735,8 @@ select {
 }
 
 .file-actions .pdf-download-button {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--line);
+  color: var(--ink);
 }
 
 .pdf-page-break-control {
@@ -1664,8 +1756,8 @@ select {
 }
 
 .file-actions .pdf-download-button:hover {
-  background: var(--accent);
-  color: var(--paper);
+  background: var(--green);
+  border-color: var(--green);
 }
 
 .add-lane-button {
@@ -2453,6 +2545,11 @@ select {
 
   .shared-roadmap-controls {
     justify-content: flex-start;
+  }
+
+  .export-menu-content {
+    right: auto;
+    left: 0;
   }
 
   .app-shell {

@@ -1,5 +1,5 @@
 import { ChangeEvent, RefObject, useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Download, FileDown, LayoutTemplate, Moon, PanelsTopLeft, Plus, Printer, Sun, Undo2, Upload, X } from 'lucide-react';
+import { ChevronDown, Download, FileDown, LayoutTemplate, Moon, PanelsTopLeft, Plus, Printer, Sun, Undo2, Upload, X } from 'lucide-react';
 import { appConfig } from '../appConfig';
 import { AuthControls } from './AuthControls';
 import { CloudPlansControls } from './CloudPlansControls';
@@ -74,7 +74,6 @@ export function PlannerHeader({
   onCloudLoad,
 }: PlannerHeaderProps) {
   const enabledSnapModes = appConfig.controls.snapModes;
-  const [showMoreControls, setShowMoreControls] = useState(() => window.matchMedia('(min-width: 761px)').matches);
   const [showTemplateDrawer, setShowTemplateDrawer] = useState(false);
 
   useEffect(() => {
@@ -184,40 +183,43 @@ export function PlannerHeader({
 
           <button type="button" className="icon-button" onClick={onUndo} disabled={!canUndo} title="Undo" aria-label="Undo"><Undo2 size={18} /></button>
           {!printFriendly && <button type="button" className="icon-button add-lane-button" onClick={onAddLane} title="Add swimlane" aria-label="Add swimlane"><Plus size={18} /><span>Add swimlane</span></button>}
-          <details className="more-controls" open={showMoreControls} onToggle={(event) => setShowMoreControls(event.currentTarget.open)}>
-            <summary title={showMoreControls ? 'Hide more controls' : 'Show more controls'} aria-label={showMoreControls ? 'Hide more controls' : 'Show more controls'}><ChevronRight size={20} /></summary>
-            <div className="more-controls-content">
-              <div className="timeline-settings" aria-label="Timeline settings">
-                <label className="setting-toggle">
-                  <input type="checkbox" checked={printFriendly} onChange={onTogglePrintFriendly} />
-                  <span><Printer size={15} /> Printify</span>
-                </label>
-              </div>
+          <details className="export-menu">
+            <summary className="export-menu-trigger" aria-label="Export and print options">
+              <Printer size={16} />
+              <span>Export / Print</span>
+              <ChevronDown size={15} />
+            </summary>
+            <div className="export-menu-content">
+              <label className="setting-toggle export-menu-row" title="Remove editing controls from the timeline for printing">
+                <input type="checkbox" checked={printFriendly} onChange={onTogglePrintFriendly} />
+                <span><Printer size={15} /> Print preview</span>
+              </label>
               {enabledSnapModes.length > 0 && (
-                <select className="snap-mode-select" value={activeSnapMode} onChange={(event) => onSnapModeChange(event.target.value as SnapMode)}>
-                  {enabledSnapModes.map((snapOption) => <option key={snapOption.value} value={snapOption.value}>{snapOption.label}</option>)}
-                </select>
+                <label className="export-menu-row export-menu-select">
+                  <span>Snap tasks</span>
+                  <select className="snap-mode-select" value={activeSnapMode} onChange={(event) => onSnapModeChange(event.target.value as SnapMode)}>
+                    {enabledSnapModes.map((snapOption) => <option key={snapOption.value} value={snapOption.value}>{snapOption.label}</option>)}
+                  </select>
+                </label>
               )}
-              <div className="file-actions" aria-label="File actions">
-                {appConfig.controls.enableJsonImport && (
-                  <>
-                    <button type="button" className="icon-button" onClick={() => fileInputRef.current?.click()} title="Import JSON" aria-label="Import JSON"><Upload size={18} /><span>Import</span></button>
-                    <input ref={fileInputRef} className="hidden-input" type="file" accept="application/json" onChange={onImport} />
-                  </>
-                )}
-                {appConfig.controls.enableJsonExport && <button type="button" className="icon-button" onClick={onExport} title="Export JSON" aria-label="Export JSON"><Download size={18} /><span>Export</span></button>}
-                {appConfig.controls.enablePdfDownload && (
-                  <>
-                    <label className="pdf-page-break-control">
-                      <span>PDF pages wide</span>
-                      <select aria-label="PDF pages wide" value={pdfPagesWide} onChange={(event) => onPdfPagesWideChange(Number(event.target.value))}>
-                        {[1, 2, 3, 4].map((pagesWide) => <option key={pagesWide} value={pagesWide}>{pagesWide} page{pagesWide === 1 ? '' : 's'} wide</option>)}
-                      </select>
-                    </label>
-                    <button type="button" className="icon-button pdf-download-button" onClick={onExportPdf} title="Download PDF" aria-label="Download PDF"><FileDown size={18} /><span>PDF</span></button>
-                  </>
-                )}
-              </div>
+              {appConfig.controls.enableJsonImport && (
+                <>
+                  <button type="button" className="export-menu-action" onClick={() => fileInputRef.current?.click()}><Upload size={16} /><span>Import JSON</span></button>
+                  <input ref={fileInputRef} className="hidden-input" type="file" accept="application/json" onChange={onImport} />
+                </>
+              )}
+              {appConfig.controls.enableJsonExport && <button type="button" className="export-menu-action" onClick={onExport}><Download size={16} /><span>Export JSON</span></button>}
+              {appConfig.controls.enablePdfDownload && (
+                <>
+                  <label className="export-menu-row export-menu-select">
+                    <span>PDF pages wide</span>
+                    <select aria-label="PDF pages wide" value={pdfPagesWide} onChange={(event) => onPdfPagesWideChange(Number(event.target.value))}>
+                      {[1, 2, 3, 4].map((pagesWide) => <option key={pagesWide} value={pagesWide}>{pagesWide} page{pagesWide === 1 ? '' : 's'} wide</option>)}
+                    </select>
+                  </label>
+                  <button type="button" className="export-menu-action" onClick={onExportPdf}><FileDown size={16} /><span>Download PDF</span></button>
+                </>
+              )}
             </div>
           </details>
         </div>
