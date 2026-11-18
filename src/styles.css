@@ -552,6 +552,198 @@ button {
   margin: 0;
 }
 
+.cloud-plans-overlay {
+  position: fixed;
+  z-index: 31;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.52);
+}
+
+.cloud-plans-dialog {
+  width: min(520px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  padding: 28px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+  color: #0f172a;
+}
+
+.cloud-plans-header,
+.cloud-plan-list-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cloud-plans-header {
+  margin-bottom: 20px;
+}
+
+.cloud-plans-kicker {
+  margin: 0 0 6px;
+  color: #047857;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cloud-plans-header h2 {
+  margin: 0;
+  font-size: 1.65rem;
+}
+
+.cloud-plan-name {
+  display: grid;
+  gap: 8px;
+}
+
+.cloud-plan-name span {
+  color: #334155;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.cloud-plan-name input {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 11px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #0f172a;
+}
+
+.cloud-plan-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.cloud-plan-primary,
+.cloud-plan-secondary,
+.cloud-plan-load,
+.cloud-plan-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  border: 0;
+  font-weight: 700;
+}
+
+.cloud-plan-primary {
+  background: #0f172a;
+  color: #fff;
+}
+
+.cloud-plan-secondary {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #334155;
+}
+
+.cloud-plan-error,
+.cloud-plan-status {
+  margin: 12px 0 0;
+  font-size: 0.86rem;
+}
+
+.cloud-plan-error {
+  color: #b91c1c;
+}
+
+.cloud-plan-status,
+.cloud-plan-list-heading {
+  color: #047857;
+}
+
+.cloud-plan-list-heading {
+  align-items: center;
+  margin: 20px 0 8px;
+  font-size: 0.84rem;
+}
+
+.cloud-plan-list-heading small {
+  color: #64748b;
+}
+
+.cloud-plan-list {
+  display: grid;
+  gap: 8px;
+}
+
+.cloud-plan-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  border: 1px solid #e2e8f0;
+}
+
+.cloud-plan-item.active {
+  border-color: #047857;
+}
+
+.cloud-plan-load {
+  justify-content: flex-start;
+  min-width: 0;
+  padding: 10px;
+  background: #fff;
+  color: #0f172a;
+  text-align: left;
+}
+
+.cloud-plan-load span {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.cloud-plan-load strong,
+.cloud-plan-load small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cloud-plan-load small {
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.cloud-plan-delete {
+  border-left: 1px solid #e2e8f0;
+  background: #fff;
+  color: #64748b;
+}
+
+.cloud-plan-delete:hover {
+  color: #b91c1c;
+}
+
+.cloud-plans-empty {
+  color: #64748b;
+  font-size: 0.88rem;
+}
+
+.cloud-plans-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.cloud-plans-trigger:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
 .auth-overlay {
   position: fixed;
   z-index: 30;
@@ -2154,10 +2346,12 @@ select {
     padding: 24px;
   }
 
+  .cloud-plans-overlay,
   .auth-overlay {
     padding: 14px;
   }
 
+  .cloud-plans-dialog,
   .auth-dialog {
     padding: 22px;
   }

@@ -798,6 +798,7 @@ function App() {
         onExport={exportRoadmap}
         onExportPdf={exportRoadmapPdf}
         onImport={importRoadmap}
+        onCloudLoad={(cloudRoadmap) => updateRoadmap(() => normalizeRoadmap(cloudRoadmap), false)}
       />
       <RoadmapTimeline
         roadmap={roadmap}

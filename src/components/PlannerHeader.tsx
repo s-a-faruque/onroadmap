@@ -2,6 +2,7 @@ import { ChangeEvent, RefObject, useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Download, FileDown, LayoutTemplate, Moon, PanelsTopLeft, Plus, Printer, Sun, Undo2, Upload, X } from 'lucide-react';
 import { appConfig } from '../appConfig';
 import { AuthControls } from './AuthControls';
+import { CloudPlansControls } from './CloudPlansControls';
 import type { RoadmapTemplate } from '../templates';
 import type { RoadmapState, SnapMode, TimelineDesign, TimelineView } from '../types';
 
@@ -36,6 +37,7 @@ interface PlannerHeaderProps {
   onExport: () => void;
   onExportPdf: () => void;
   onImport: (event: ChangeEvent<HTMLInputElement>) => void;
+  onCloudLoad: (roadmap: RoadmapState) => void;
 }
 
 export function PlannerHeader({
@@ -69,6 +71,7 @@ export function PlannerHeader({
   onExport,
   onExportPdf,
   onImport,
+  onCloudLoad,
 }: PlannerHeaderProps) {
   const enabledSnapModes = appConfig.controls.snapModes;
   const [showMoreControls, setShowMoreControls] = useState(() => window.matchMedia('(min-width: 761px)').matches);
@@ -110,6 +113,7 @@ export function PlannerHeader({
             Templates
           </a>
           <AuthControls variant="planner" />
+          <CloudPlansControls roadmap={roadmap} onLoad={onCloudLoad} />
           <button 
             className="planner-nav-action" 
             type="button" 

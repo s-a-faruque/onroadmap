@@ -167,7 +167,7 @@ export function AuthControls({ variant }: AuthControlsProps) {
             {user ? (
               <div className="auth-account">
                 <p>Signed in as <strong>{user.email}</strong></p>
-                <p className="auth-note">Your roadmaps remain stored in this browser.</p>
+                <p className="auth-note">Use Cloud plans to save and load roadmaps.</p>
                 <button type="button" className="auth-submit" onClick={signOut} disabled={isSubmitting}>
                   <LogOut size={17} />
                   {isSubmitting ? 'Signing out…' : 'Sign out'}
@@ -236,7 +236,7 @@ export function AuthControls({ variant }: AuthControlsProps) {
                     {isCreatingAccount ? 'Already have an account? Sign in' : 'New here? Create an account'}
                   </button>
                 )}
-                <p className="auth-note">Signing in does not upload or sync your roadmaps.</p>
+                <p className="auth-note">Cloud plans store roadmaps only when you choose Save plan.</p>
               </>
             ) : (
               <p className="auth-setup-message">

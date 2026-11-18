@@ -35,7 +35,9 @@ VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
 ```
 
-Enable Email in the Supabase project's Authentication providers to offer email/password and email magic-link sign-in. Add your app's local and deployed URLs to the Supabase Authentication URL configuration. Authentication only identifies the user; roadmaps continue to be stored in the current browser and are not synced to Supabase.
+Enable Email in the Supabase project's Authentication providers to offer email/password and email magic-link sign-in. Add your app's local and deployed URLs to the Supabase Authentication URL configuration.
+
+Run `supabase/schema.sql` in the Supabase SQL editor to create the `roadmaps` table and row-level security policies. Signed-in users can then save, load, and delete their plans through **Cloud plans**. LocalStorage remains the automatic offline draft.
 
 Timeline and toolbar features are configured in `src/appConfig.ts`. You can change the timeline start year, end year, start month, month span, year selector visibility, available snap modes, default snap mode, JSON export/import visibility, and PDF download visibility there.
 
@@ -50,5 +52,7 @@ Quarter labels use fiscal-year wording based on the configured start year, such 
 The app theme is fixed to the configured `Cool light` palette in `src/appConfig.ts`; there is no runtime theme selector.
 
 ## Persistence Boundary
+
+LocalStorage remains the automatic draft store. `src/cloudRoadmapStore.ts` saves the current `RoadmapState` as one payload per plan. This phase has no revision history: saving an existing plan overwrites it, while **Save as new** creates another plan.
 
 The UI talks to a small `RoadmapStore` interface in `src/storage.ts`. The current implementation is LocalStorage, but a database-backed adapter can be added later without rewriting the timeline components.
