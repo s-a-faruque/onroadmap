@@ -13,6 +13,7 @@ import {
 } from './dateMath';
 import { appConfig } from './appConfig';
 import { localRoadmapStore } from './storage';
+import { loadPublicRoadmap } from './cloudRoadmapStore';
 import type { RoadmapState, RoadmapTask, SnapMode, TimelineDesign, TimelineView } from './types';
 import { PlannerHeader } from './components/PlannerHeader';
 import { DragMode, RoadmapTimeline } from './components/RoadmapTimeline';
@@ -188,7 +189,12 @@ function isValidTimelineRange(range: TimelineRange) {
 }
 
 function App() {
-  const [showLanding, setShowLanding] = useState(() => window.location.hash !== '#planner');
+  const sharedToken = window.location.hash.startsWith('#shared=')
+    ? window.location.hash.slice('#shared='.length)
+    : null;
+  const [showLanding, setShowLanding] = useState(() => !sharedToken && window.location.hash !== '#planner');
+  const [isReadOnlyShare, setIsReadOnlyShare] = useState(Boolean(sharedToken));
+  const [sharedLoadError, setSharedLoadError] = useState('');
   const [timelineRangeSelection, setTimelineRangeSelection] = useState(getInitialTimelineRange);
   const [selectedTemplateId, setSelectedTemplateId] = useState(ROADMAP_TEMPLATES[0].id);
   const timelineStartMonth = timelineRangeSelection.start.monthIndex;
@@ -237,7 +243,11 @@ function App() {
   useEffect(() => {
     function syncRoute() {
       const isTemplatesPage = window.location.pathname.replace(/\/+$/, '') === '/templates';
-      setShowLanding(!isTemplatesPage && window.location.hash !== '#planner');
+      const nextSharedToken = window.location.hash.startsWith('#shared=')
+        ? window.location.hash.slice('#shared='.length)
+        : null;
+      setIsReadOnlyShare(Boolean(nextSharedToken));
+      setShowLanding(!isTemplatesPage && !nextSharedToken && window.location.hash !== '#planner');
     }
 
     window.addEventListener('hashchange', syncRoute);
@@ -250,8 +260,27 @@ function App() {
   }, []);
 
   useEffect(() => {
-    localRoadmapStore.save(roadmap);
-  }, [roadmap]);
+    if (!sharedToken) {
+      return;
+    }
+
+    setSharedLoadError('');
+    loadPublicRoadmap(sharedToken)
+      .then((plan) => {
+        const publicRoadmap = normalizeRoadmap(plan.payload);
+        roadmapRef.current = publicRoadmap;
+        setRoadmap(publicRoadmap);
+      })
+      .catch((error) => {
+        setSharedLoadError(error instanceof Error ? error.message : 'Unable to load shared plan.');
+      });
+  }, [sharedToken]);
+
+  useEffect(() => {
+    if (!isReadOnlyShare) {
+      localRoadmapStore.save(roadmap);
+    }
+  }, [roadmap, isReadOnlyShare]);
 
   useEffect(() => {
     function handleUndoShortcut(event: KeyboardEvent) {
@@ -390,6 +419,45 @@ function App() {
 
   if (showLanding) {
     return <LandingPageTW onOpenPlanner={() => { window.location.hash = 'planner'; }} />;
+  }
+
+  if (isReadOnlyShare) {
+    return (
+      <main className="app-shell shared-roadmap-shell">
+        <section className="shared-roadmap-banner" aria-label="Shared roadmap">
+          <div>
+            <p>Shared view</p>
+            <strong>{roadmap.title}</strong>
+          </div>
+          {sharedLoadError ? <span role="alert">{sharedLoadError}</span> : <span>Read-only</span>}
+        </section>
+        <RoadmapTimeline
+          roadmap={roadmap}
+          timelineDesign={timelineDesign}
+          timelineRef={timelineRef}
+          timelineView={timelineView}
+          timelineYear={timelineYear}
+          timelineStartMonth={timelineStartMonth}
+          timelineMonthSpan={timelineMonthSpan}
+          dayCount={dayCount}
+          dayWidth={dayWidth}
+          timelineWidth={timelineWidth}
+          months={months}
+          quarters={quarters}
+          weeks={weeks}
+          days={days}
+          draggingTaskId={undefined}
+          printFriendly={true}
+          readOnly={true}
+          onStartDrag={() => undefined}
+          onTaskChange={() => undefined}
+          onDeleteTask={() => undefined}
+          onLaneChange={() => undefined}
+          onDeleteLane={() => undefined}
+          onAddTask={() => undefined}
+        />
+      </main>
+    );
   }
 
   function startDrag(event: ReactPointerEvent, task: RoadmapTask, mode: DragMode) {

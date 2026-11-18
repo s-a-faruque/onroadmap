@@ -43,6 +43,7 @@ interface RoadmapTimelineProps {
   days: Array<{ label: string; startDay: number; days: number }>;
   draggingTaskId: string | undefined;
   printFriendly: boolean;
+  readOnly?: boolean;
   onStartDrag: (event: ReactPointerEvent, task: RoadmapTask, mode: DragMode) => void;
   onTaskChange: (taskId: string, updates: Partial<RoadmapTask>) => void;
   onDeleteTask: (taskId: string) => void;
@@ -73,7 +74,7 @@ function getLaneTaskLayouts(roadmap: RoadmapState, timelineYear: number, startMo
 export function RoadmapTimeline({
   roadmap, timelineDesign, timelineRef, timelineView, timelineYear, timelineStartMonth, timelineMonthSpan,
   dayCount, dayWidth, timelineWidth, months, quarters, weeks, days, draggingTaskId,
-  printFriendly, onStartDrag, onTaskChange, onDeleteTask, onLaneChange, onDeleteLane, onAddTask,
+  printFriendly, readOnly = false, onStartDrag, onTaskChange, onDeleteTask, onLaneChange, onDeleteLane, onAddTask,
 }: RoadmapTimelineProps) {
   const laneTaskLayouts = useMemo(() => getLaneTaskLayouts(roadmap, timelineYear, timelineStartMonth, timelineMonthSpan), [roadmap, timelineYear, timelineStartMonth, timelineMonthSpan]);
   const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
@@ -145,7 +146,7 @@ export function RoadmapTimeline({
                     const width = Math.max((endDay - startDay + 1) * dayWidth, 42);
                     const hasAdditionalLabels = task.tags.length > 1;
                     const isLabelsExpanded = expandedTaskId === task.id;
-                    return <article className={`task-pill ${draggingTaskId === task.id ? 'dragging' : ''}`} key={task.id} title={task.tags.join(', ')} style={{ left: startDay * dayWidth, top: TASK_TOP + rowIndex * TASK_ROW_HEIGHT, width, borderColor: task.color, backgroundColor: timelineDesign === 'flow' ? `color-mix(in srgb, ${task.color} 18%, var(--paper))` : 'var(--paper)' }} onPointerDown={(event) => onStartDrag(event, task, 'move')}>
+                    return <article className={`task-pill ${draggingTaskId === task.id ? 'dragging' : ''}`} key={task.id} title={task.tags.join(', ')} style={{ left: startDay * dayWidth, top: TASK_TOP + rowIndex * TASK_ROW_HEIGHT, width, borderColor: task.color, backgroundColor: timelineDesign === 'flow' ? `color-mix(in srgb, ${task.color} 18%, var(--paper))` : 'var(--paper)' }} onPointerDown={(event) => { if (!readOnly) onStartDrag(event, task, 'move'); }}>
                       {!printFriendly && <button type="button" className="resize-handle left" onPointerDown={(event) => { event.stopPropagation(); onStartDrag(event, task, 'resize-left'); }} aria-label={`Resize ${task.title} start`} />}
                       {!printFriendly && <GripVertical className="drag-grip" size={15} />}
                       <div className="task-content">

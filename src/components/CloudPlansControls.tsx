@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
-import { Cloud, FolderOpen, Plus, Trash2, X } from 'lucide-react';
+import { Cloud, FolderOpen, Link2, Plus, Trash2, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { deleteCloudRoadmap, listCloudRoadmaps, saveCloudRoadmap, type CloudRoadmap } from '../cloudRoadmapStore';
+import { deleteCloudRoadmap, listCloudRoadmaps, saveCloudRoadmap, setCloudRoadmapPublic, type CloudRoadmap } from '../cloudRoadmapStore';
 import type { RoadmapState } from '../types';
 
 interface CloudPlansControlsProps {
@@ -118,6 +118,36 @@ export function CloudPlansControls({ roadmap, onLoad }: CloudPlansControlsProps)
     setMessage(`Loaded "${plan.title}".`);
   }
 
+  async function togglePublicPlan(plan: CloudRoadmap) {
+    if (!user) {
+      return;
+    }
+
+    setIsWorking(true);
+    setErrorMessage('');
+    setMessage('');
+    try {
+      const shareToken = await setCloudRoadmapPublic(user, plan.id, !plan.isPublic);
+      setPlans((currentPlans) => currentPlans.map((currentPlan) => (
+        currentPlan.id === plan.id
+          ? { ...currentPlan, isPublic: !plan.isPublic, shareToken }
+          : currentPlan
+      )));
+
+      if (shareToken) {
+        const url = `${window.location.origin}${window.location.pathname}#shared=${shareToken}`;
+        await navigator.clipboard?.writeText(url);
+        setMessage('Public link created and copied.');
+      } else {
+        setMessage('Public sharing stopped.');
+      }
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Unable to update sharing.');
+    } finally {
+      setIsWorking(false);
+    }
+  }
+
   async function removePlan(planId: string) {
     if (!user) {
       return;
@@ -200,6 +230,7 @@ export function CloudPlansControls({ roadmap, onLoad }: CloudPlansControlsProps)
                             <small>Updated {new Date(plan.updatedAt).toLocaleString()}</small>
                           </span>
                         </button>
+                        <button type="button" className="cloud-plan-share" onClick={() => togglePublicPlan(plan)} disabled={isWorking} aria-label={plan.isPublic ? `Stop sharing ${plan.title}` : `Share ${plan.title}`} title={plan.isPublic ? 'Stop public sharing' : 'Create public link'}><Link2 size={16} /></button>
                         <button type="button" className="cloud-plan-delete" onClick={() => removePlan(plan.id)} disabled={isWorking} aria-label={`Delete ${plan.title}`}><Trash2 size={16} /></button>
                       </article>
                     ))}

@@ -682,7 +682,7 @@ button {
 
 .cloud-plan-item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 44px;
+  grid-template-columns: minmax(0, 1fr) 44px 44px;
   border: 1px solid #e2e8f0;
 }
 
@@ -718,8 +718,24 @@ button {
   font-weight: 500;
 }
 
+.cloud-plan-share,
 .cloud-plan-delete {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  min-height: 44px;
+  border: 0;
   border-left: 1px solid #e2e8f0;
+  background: #fff;
+  color: #64748b;
+}
+
+.cloud-plan-share:hover,
+.cloud-plan-share[aria-label^='Stop sharing'] {
+  color: #047857;
+}
+
+.cloud-plan-delete {
   background: #fff;
   color: #64748b;
 }
@@ -768,6 +784,45 @@ button {
 .cloud-plans-trigger:disabled {
   cursor: default;
   opacity: 0.55;
+}
+
+.shared-roadmap-shell {
+  min-height: 100vh;
+}
+
+.shared-roadmap-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 18px 0;
+  padding: 14px 16px;
+  border: 1px solid #cbd5e1;
+  border-left: 4px solid #047857;
+  background: #fff;
+}
+
+.shared-roadmap-banner div {
+  display: grid;
+  gap: 3px;
+}
+
+.shared-roadmap-banner p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.shared-roadmap-banner strong {
+  color: #0f172a;
+}
+
+.shared-roadmap-banner > span {
+  color: #047857;
+  font-size: 0.84rem;
+  font-weight: 800;
 }
 
 .auth-overlay {
@@ -2380,6 +2435,10 @@ select {
   .cloud-plans-dialog,
   .auth-dialog {
     padding: 22px;
+  }
+
+  .shared-roadmap-banner {
+    margin: 14px 0;
   }
 
   .app-shell {
