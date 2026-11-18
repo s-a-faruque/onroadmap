@@ -201,7 +201,7 @@ function App() {
   });
   const roadmapRef = useRef(roadmap);
   const undoStackRef = useRef<RoadmapState[]>([]);
-  const [timelineView, setTimelineView] = useState<TimelineView>('month');
+  const [timelineView, setTimelineView] = useState<TimelineView>('week');
   const [snapMode, setSnapMode] = useState<SnapMode>(appConfig.controls.defaultSnapMode);
   const [printFriendly, setPrintFriendly] = useState(false);
   const [selectedThemeId, setSelectedThemeId] = useState(() => {
