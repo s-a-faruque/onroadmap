@@ -733,12 +733,14 @@ button {
   font-size: 0.88rem;
 }
 
+.cloud-plans-save,
 .cloud-plans-trigger {
   display: inline-flex;
   align-items: center;
   gap: 7px;
 }
 
+.cloud-plans-save:disabled,
 .cloud-plans-trigger:disabled {
   cursor: default;
   opacity: 0.55;

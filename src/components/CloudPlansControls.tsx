@@ -19,6 +19,7 @@ export function CloudPlansControls({ roadmap, onLoad }: CloudPlansControlsProps)
   const [isWorking, setIsWorking] = useState(false);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [directSaveStatus, setDirectSaveStatus] = useState<'idle' | 'working' | 'saved' | 'error'>('idle');
 
   useEffect(() => {
     if (!supabase) {
@@ -42,6 +43,10 @@ export function CloudPlansControls({ roadmap, onLoad }: CloudPlansControlsProps)
     setPlanName((currentName) => currentPlanId ? currentName : roadmap.title);
   }, [roadmap.title, currentPlanId]);
 
+  useEffect(() => {
+    setDirectSaveStatus((currentStatus) => currentStatus === 'saved' ? 'idle' : currentStatus);
+  }, [roadmap]);
+
   async function refreshPlans(activeUser: User) {
     setIsWorking(true);
     setErrorMessage('');
@@ -63,19 +68,28 @@ export function CloudPlansControls({ roadmap, onLoad }: CloudPlansControlsProps)
     }
   }
 
-  async function savePlan(saveAsNew: boolean) {
+  async function savePlan(saveAsNew: boolean, directSave = false) {
     if (!user) {
       setErrorMessage('Sign in before saving a plan.');
+      if (directSave) {
+        setDirectSaveStatus('error');
+      }
       return;
     }
 
     const name = planName.trim();
     if (!name) {
       setErrorMessage('Enter a plan name.');
+      if (directSave) {
+        setDirectSaveStatus('error');
+      }
       return;
     }
 
     setIsWorking(true);
+    if (directSave) {
+      setDirectSaveStatus('working');
+    }
     setErrorMessage('');
     setMessage('');
     try {
@@ -83,9 +97,15 @@ export function CloudPlansControls({ roadmap, onLoad }: CloudPlansControlsProps)
       setCurrentPlanId(saved.id);
       setPlanName(saved.title);
       setMessage(saveAsNew ? 'Saved as a new plan.' : 'Plan saved.');
+      if (directSave) {
+        setDirectSaveStatus('saved');
+      }
       await refreshPlans(user);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Unable to save plan.');
+      if (directSave) {
+        setDirectSaveStatus('error');
+      }
     } finally {
       setIsWorking(false);
     }
@@ -125,6 +145,10 @@ export function CloudPlansControls({ roadmap, onLoad }: CloudPlansControlsProps)
 
   return (
     <>
+      <button type="button" className="planner-nav-action cloud-plans-save" onClick={() => savePlan(false, true)} disabled={!user || isWorking}>
+        <Cloud size={16} />
+        <span>{directSaveStatus === 'working' ? 'Saving...' : directSaveStatus === 'saved' ? 'Saved to Cloud' : directSaveStatus === 'error' ? 'Save failed' : 'Save on Cloud'}</span>
+      </button>
       <button type="button" className="planner-nav-action cloud-plans-trigger" onClick={openPlans} disabled={!user}>
         <Cloud size={16} />
         <span>{currentPlanId ? 'Plan saved' : 'Cloud plans'}</span>

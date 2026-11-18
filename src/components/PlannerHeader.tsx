@@ -113,7 +113,6 @@ export function PlannerHeader({
             Templates
           </a>
           <AuthControls variant="planner" />
-          <CloudPlansControls roadmap={roadmap} onLoad={onCloudLoad} />
           <button 
             className="planner-nav-action" 
             type="button" 
@@ -157,6 +156,7 @@ export function PlannerHeader({
         </div>
 
         <div className="controls">
+          <CloudPlansControls roadmap={roadmap} onLoad={onCloudLoad} />
           <button type="button" className="template-drawer-trigger" onClick={() => setShowTemplateDrawer(true)} aria-haspopup="dialog" aria-expanded={showTemplateDrawer}>
             <LayoutTemplate size={17} />
             <span>Templates</span>
