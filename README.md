@@ -7,6 +7,8 @@ A lightweight, responsive 1-year roadmap planner for dragging and stretching pro
 - Month view with 12 columns and week view with 52 columns.
 - Horizontal scroll across the full year grid.
 - Drag tasks across time and between swimlanes.
+- Click or drag across the timeline grid to add tasks with a preselected lane and date range.
+- Use the **Add task** action in the toolbar to add a task to the first swimlane.
 - Resize task start and end dates with left and right handles.
 - Snap task movement to day, week, or month boundaries.
 - Editable task titles, color badges, comma-separated tags, and swimlane names.

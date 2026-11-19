@@ -1768,6 +1768,27 @@ select {
   font-size: 0.85rem;
 }
 
+.primary-add-task-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 15px;
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  background: var(--green);
+  color: var(--paper);
+  font-size: 0.9rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.primary-add-task-button:hover {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
 .hidden-input {
   display: none;
 }
@@ -2084,6 +2105,42 @@ select {
 .lane-track {
   position: relative;
   flex: 0 0 auto;
+}
+
+.lane-track-addable {
+  cursor: crosshair;
+}
+
+.task-create-ghost {
+  position: absolute;
+  top: 18px;
+  z-index: 1;
+  display: flex;
+  height: 42px;
+  align-items: center;
+  gap: 5px;
+  overflow: visible;
+  padding: 0 8px;
+  border: 1px dashed var(--green);
+  border-radius: 7px;
+  background: rgba(var(--green-rgb), 0.1);
+  color: var(--green);
+  font-size: 0.76rem;
+  font-weight: 800;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.task-create-ghost span {
+  flex: 0 0 auto;
+}
+
+.task-create-hover {
+  opacity: 0.76;
+}
+
+.task-create-selection {
+  opacity: 0.92;
 }
 
 .task-pill {

@@ -119,16 +119,16 @@ function normalizeRoadmap(roadmap: RoadmapState): RoadmapState {
   };
 }
 
-function createTask(year: number, startMonth: number, monthSpan: number, laneId: string, index: number): RoadmapTask {
-  const startDay = 14 + index * 21;
-  const endDay = startDay + 28;
+function createTask(year: number, startMonth: number, monthSpan: number, laneId: string, index: number, startDay?: number, endDay?: number): RoadmapTask {
+  const taskStartDay = startDay ?? 14 + index * 21;
+  const taskEndDay = endDay ?? taskStartDay + 28;
 
   return {
     id: crypto.randomUUID(),
     title: 'New task',
     laneId,
-    startDate: dayToDate(startDay, year, startMonth, monthSpan),
-    endDate: dayToDate(endDay, year, startMonth, monthSpan),
+    startDate: dayToDate(taskStartDay, year, startMonth, monthSpan),
+    endDate: dayToDate(taskEndDay, year, startMonth, monthSpan),
     color: COLORS[index % COLORS.length],
     tags: ['Label'],
   };
@@ -476,6 +476,7 @@ function App() {
           timelineDesign={timelineDesign}
           timelineRef={timelineRef}
           timelineView={timelineView}
+          snapMode={activeSnapMode}
           timelineYear={timelineYear}
           timelineStartMonth={timelineStartMonth}
           timelineMonthSpan={timelineMonthSpan}
@@ -495,6 +496,7 @@ function App() {
           onLaneChange={() => undefined}
           onDeleteLane={() => undefined}
           onAddTask={() => undefined}
+          onCreateTask={() => undefined}
         />
       </main>
     );
@@ -571,10 +573,10 @@ function App() {
     }));
   }
 
-  function addTask(laneId: string) {
+  function addTask(laneId: string, startDay?: number, endDay?: number) {
     updateRoadmap((currentRoadmap) => ({
       ...currentRoadmap,
-      tasks: [...currentRoadmap.tasks, createTask(timelineYear, timelineStartMonth, timelineMonthSpan, laneId, currentRoadmap.tasks.length)],
+      tasks: [...currentRoadmap.tasks, createTask(timelineYear, timelineStartMonth, timelineMonthSpan, laneId, currentRoadmap.tasks.length, startDay, endDay)],
     }));
   }
 
@@ -902,6 +904,12 @@ function App() {
         onTogglePrintFriendly={() => setPrintFriendly((current) => !current)}
         onUndo={undoRoadmap}
         canUndo={undoStackRef.current.length > 0}
+        onAddTask={() => {
+          const defaultLane = roadmap.lanes[0];
+          if (defaultLane) {
+            addTask(defaultLane.id);
+          }
+        }}
         onAddLane={addLane}
         onExport={exportRoadmap}
         onExportPdf={exportRoadmapPdf}
@@ -913,6 +921,7 @@ function App() {
         timelineDesign={timelineDesign}
         timelineRef={timelineRef}
         timelineView={timelineView}
+        snapMode={activeSnapMode}
         timelineYear={timelineYear}
         timelineStartMonth={timelineStartMonth}
         timelineMonthSpan={timelineMonthSpan}
@@ -934,6 +943,7 @@ function App() {
         }))}
         onDeleteLane={deleteLane}
         onAddTask={addTask}
+        onCreateTask={addTask}
       />
       <TaskInventory roadmap={roadmap} onTaskChange={updateTask} onDeleteTask={deleteTask} onClearTasks={clearTasks} onExport={exportTaskTable} />
       <Analytics />

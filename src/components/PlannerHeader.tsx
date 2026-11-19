@@ -33,6 +33,7 @@ interface PlannerHeaderProps {
   onTogglePrintFriendly: () => void;
   onUndo: () => void;
   canUndo: boolean;
+  onAddTask: () => void;
   onAddLane: () => void;
   onExport: () => void;
   onExportPdf: () => void;
@@ -67,6 +68,7 @@ export function PlannerHeader({
   onTogglePrintFriendly,
   onUndo,
   canUndo,
+  onAddTask,
   onAddLane,
   onExport,
   onExportPdf,
@@ -182,6 +184,7 @@ export function PlannerHeader({
           </div>
 
           <button type="button" className="icon-button" onClick={onUndo} disabled={!canUndo} title="Undo" aria-label="Undo"><Undo2 size={18} /></button>
+          {!printFriendly && <button type="button" className="primary-add-task-button" onClick={onAddTask} title="Add task"><Plus size={18} /><span>Add task</span></button>}
           {!printFriendly && <button type="button" className="icon-button add-lane-button" onClick={onAddLane} title="Add swimlane" aria-label="Add swimlane"><Plus size={18} /><span>Add swimlane</span></button>}
           <details className="export-menu">
             <summary className="export-menu-trigger" aria-label="Export and print options">

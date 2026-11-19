@@ -1,7 +1,7 @@
-import { PointerEvent as ReactPointerEvent, RefObject, useMemo, useState } from 'react';
+import { PointerEvent as ReactPointerEvent, RefObject, useMemo, useRef, useState } from 'react';
 import { GripVertical, Plus, Trash2 } from 'lucide-react';
-import { dateToDay } from '../dateMath';
-import type { RoadmapState, RoadmapTask, TimelineDesign, TimelineView } from '../types';
+import { dateToDay, snapDay } from '../dateMath';
+import type { RoadmapState, RoadmapTask, SnapMode, TimelineDesign, TimelineView } from '../types';
 
 const MIN_LANE_HEIGHT = 86;
 const MIN_LANE_LABEL_WIDTH = 150;
@@ -26,11 +26,22 @@ export interface LaneTaskLayout {
   tasks: PositionedTask[];
 }
 
+interface TaskCreationSession {
+  laneId: string;
+  startDay: number;
+  currentDay: number;
+  startClientX: number;
+  startClientY: number;
+  pointerId: number;
+  didDrag: boolean;
+}
+
 interface RoadmapTimelineProps {
   roadmap: RoadmapState;
   timelineDesign: TimelineDesign;
   timelineRef: RefObject<HTMLDivElement | null>;
   timelineView: TimelineView;
+  snapMode: SnapMode;
   timelineYear: number;
   timelineStartMonth: number;
   timelineMonthSpan: number;
@@ -50,6 +61,7 @@ interface RoadmapTimelineProps {
   onLaneChange: (laneId: string, name: string) => void;
   onDeleteLane: (laneId: string) => void;
   onAddTask: (laneId: string) => void;
+  onCreateTask: (laneId: string, startDay: number, endDay: number) => void;
 }
 
 function getLaneTaskLayouts(roadmap: RoadmapState, timelineYear: number, startMonth: number, monthSpan: number): Record<string, LaneTaskLayout> {
@@ -72,13 +84,100 @@ function getLaneTaskLayouts(roadmap: RoadmapState, timelineYear: number, startMo
 }
 
 export function RoadmapTimeline({
-  roadmap, timelineDesign, timelineRef, timelineView, timelineYear, timelineStartMonth, timelineMonthSpan,
+  roadmap, timelineDesign, timelineRef, timelineView, snapMode, timelineYear, timelineStartMonth, timelineMonthSpan,
   dayCount, dayWidth, timelineWidth, months, quarters, weeks, days, draggingTaskId,
-  printFriendly, readOnly = false, onStartDrag, onTaskChange, onDeleteTask, onLaneChange, onDeleteLane, onAddTask,
+  printFriendly, readOnly = false, onStartDrag, onTaskChange, onDeleteTask, onLaneChange, onDeleteLane, onAddTask, onCreateTask,
 }: RoadmapTimelineProps) {
   const laneTaskLayouts = useMemo(() => getLaneTaskLayouts(roadmap, timelineYear, timelineStartMonth, timelineMonthSpan), [roadmap, timelineYear, timelineStartMonth, timelineMonthSpan]);
   const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
   const [laneLabelWidth, setLaneLabelWidth] = useState<number>(DEFAULT_LANE_LABEL_WIDTH);
+  const [hoveredCell, setHoveredCell] = useState<{ laneId: string; day: number } | null>(null);
+  const [creationPreview, setCreationPreview] = useState<TaskCreationSession | null>(null);
+  const creationSessionRef = useRef<TaskCreationSession | null>(null);
+
+  const getDayAtPointer = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const trackBounds = event.currentTarget.getBoundingClientRect();
+    return Math.min(Math.max(Math.floor((event.clientX - trackBounds.left) / dayWidth), 0), dayCount - 1);
+  };
+
+  const getCreationRange = (session: TaskCreationSession, endDay: number, isDrag: boolean) => {
+    if (!isDrag) {
+      return { startDay: session.startDay, endDay: session.startDay };
+    }
+
+    const firstDay = snapDay(session.startDay, timelineYear, snapMode, timelineStartMonth, timelineMonthSpan);
+    const lastDay = snapDay(endDay, timelineYear, snapMode, timelineStartMonth, timelineMonthSpan);
+    return {
+      startDay: Math.min(firstDay, lastDay),
+      endDay: Math.max(firstDay, lastDay),
+    };
+  };
+
+  const handleTrackPointerDown = (event: ReactPointerEvent<HTMLDivElement>, laneId: string) => {
+    if (readOnly || printFriendly || event.button !== 0 || (event.target instanceof Element && event.target.closest('.task-pill'))) {
+      return;
+    }
+
+    const startDay = getDayAtPointer(event);
+    const session = {
+      laneId,
+      startDay,
+      currentDay: startDay,
+      startClientX: event.clientX,
+      startClientY: event.clientY,
+      pointerId: event.pointerId,
+      didDrag: false,
+    };
+    creationSessionRef.current = session;
+    setCreationPreview(session);
+    event.currentTarget.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  };
+
+  const handleTrackPointerMove = (event: ReactPointerEvent<HTMLDivElement>, laneId: string) => {
+    if (readOnly || printFriendly) {
+      return;
+    }
+
+    const session = creationSessionRef.current;
+    const currentDay = getDayAtPointer(event);
+
+    if (session?.pointerId === event.pointerId) {
+      const nextSession = {
+        ...session,
+        currentDay,
+        didDrag: session.didDrag || Math.hypot(event.clientX - session.startClientX, event.clientY - session.startClientY) > 4,
+      };
+      creationSessionRef.current = nextSession;
+      setCreationPreview(nextSession);
+      return;
+    }
+
+    if (event.target instanceof Element && event.target.closest('.task-pill')) {
+      setHoveredCell(null);
+      return;
+    }
+
+    setHoveredCell({ laneId, day: currentDay });
+  };
+
+  const finishTrackPointer = (event: ReactPointerEvent<HTMLDivElement>, cancelled = false) => {
+    const session = creationSessionRef.current;
+    if (!session || session.pointerId !== event.pointerId) {
+      return;
+    }
+
+    creationSessionRef.current = null;
+    setCreationPreview(null);
+    if (cancelled) {
+      return;
+    }
+
+    const endDay = getDayAtPointer(event);
+    const isDrag = session.didDrag || Math.hypot(event.clientX - session.startClientX, event.clientY - session.startClientY) > 4;
+    const range = getCreationRange(session, endDay, isDrag);
+    onCreateTask(session.laneId, range.startDay, range.endDay);
+  };
 
   const handleLaneLabelResize = (event: ReactPointerEvent) => {
     event.preventDefault();
@@ -141,7 +240,34 @@ export function RoadmapTimeline({
                   {!printFriendly && <button type="button" onClick={() => onAddTask(lane.id)} aria-label={`Add task to ${lane.name}`}><Plus size={15} /></button>}
                   {!printFriendly && <button type="button" className="delete-lane-button" onClick={() => onDeleteLane(lane.id)} disabled={roadmap.lanes.length === 1} aria-label={`Delete ${lane.name} lane`}><Trash2 size={15} /></button>}
                 </div>
-                <div className="lane-track" style={{ width: timelineWidth }}>
+                <div
+                  className={`lane-track ${!readOnly && !printFriendly ? 'lane-track-addable' : ''}`}
+                  style={{ width: timelineWidth }}
+                  onPointerDown={(event) => handleTrackPointerDown(event, lane.id)}
+                  onPointerMove={(event) => handleTrackPointerMove(event, lane.id)}
+                  onPointerUp={finishTrackPointer}
+                  onPointerCancel={(event) => finishTrackPointer(event, true)}
+                  onPointerLeave={() => { if (!creationSessionRef.current) setHoveredCell(null); }}
+                >
+                  {creationPreview?.laneId === lane.id && (() => {
+                    const range = getCreationRange(creationPreview, creationPreview.currentDay, creationPreview.didDrag);
+                    return <div
+                      className="task-create-ghost task-create-selection"
+                      aria-hidden="true"
+                      style={{
+                        left: range.startDay * dayWidth,
+                        width: Math.max((range.endDay - range.startDay + 1) * dayWidth, 44),
+                      }}
+                    ><Plus size={14} /><span>Add task</span></div>;
+                  })()}
+                  {!readOnly && !printFriendly && !creationPreview && hoveredCell?.laneId === lane.id && <div
+                    className="task-create-ghost task-create-hover"
+                    aria-hidden="true"
+                    style={{
+                      left: Math.min(hoveredCell.day * dayWidth, Math.max(timelineWidth - 104, 0)),
+                      width: Math.min(Math.max(dayWidth, 104), timelineWidth),
+                    }}
+                  ><Plus size={14} /><span>Add task</span></div>}
                   {(laneLayout?.tasks ?? []).map(({ task, startDay, endDay, rowIndex }) => {
                     const width = Math.max((endDay - startDay + 1) * dayWidth, 42);
                     const hasAdditionalLabels = task.tags.length > 1;
