@@ -98,7 +98,7 @@ export function LandingPageTW({ onOpenPlanner }: LandingPageTWProps) {
           <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16">
             <div>
               <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-                Stop dragging boxes in PowerPoint. Build clear roadmaps in minutes.
+                Simplest way to build clear roadmaps in minutes.
               </h2>
             <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
               Use templates to start with a clear structure, then drag and resize tasks to shape the plan as priorities change.
