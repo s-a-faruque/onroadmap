@@ -189,7 +189,7 @@ export function CloudPlansControls({ roadmap, onLoad }: CloudPlansControlsProps)
           <section className="cloud-plans-dialog" role="dialog" aria-modal="true" aria-labelledby="cloud-plans-title" onClick={(event) => event.stopPropagation()}>
             <header className="cloud-plans-header">
               <div>
-                <p className="cloud-plans-kicker">Supabase</p>
+                <p className="cloud-plans-kicker">Manage Your Plans</p>
                 <h2 id="cloud-plans-title">Cloud plans</h2>
               </div>
               <button type="button" className="auth-close" onClick={() => setIsOpen(false)} aria-label="Close cloud plans"><X size={20} /></button>
