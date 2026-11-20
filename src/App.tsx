@@ -215,7 +215,6 @@ function App() {
   const [isReadOnlyShare, setIsReadOnlyShare] = useState(Boolean(sharedToken));
   const [sharedLoadError, setSharedLoadError] = useState('');
   const [timelineRangeSelection, setTimelineRangeSelection] = useState(getInitialTimelineRange);
-  const [selectedTemplateId, setSelectedTemplateId] = useState(ROADMAP_TEMPLATES[0].id);
   const timelineStartMonth = timelineRangeSelection.start.monthIndex;
   const configuredStartYear = timelineRangeSelection.start.year;
   const timelineMonthSpan = getMonthSpanFromRange(timelineRangeSelection);
@@ -847,7 +846,6 @@ function App() {
       start: nextStart,
       end: { year: nextEndYear, monthIndex: nextEnd.monthIndex },
     });
-    setSelectedTemplateId(template.id);
     updateRoadmap(() => buildRoadmapFromTemplate(template, nextStart.year, nextStart.monthIndex), true);
   }
 
@@ -885,10 +883,6 @@ function App() {
         pdfPagesWide={pdfPagesWide}
         fileInputRef={fileInputRef}
         getMonthInputValue={getMonthInputValue}
-        templateOptions={ROADMAP_TEMPLATES}
-        selectedTemplateId={selectedTemplateId}
-        onTemplateChange={setSelectedTemplateId}
-        onApplyTemplate={applyTemplate}
         selectedThemeId={selectedThemeId}
         onToggleTheme={() => setSelectedThemeId((currentThemeId) => currentThemeId === 'midnight' ? 'cool-light' : 'midnight')}
         timelineDesign={timelineDesign}
